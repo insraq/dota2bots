@@ -2,7 +2,7 @@
 
 ----------------------------------------------------------------------------------------------------
 
-local MyBots={
+local MyBots = {
   "npc_dota_hero_keeper_of_the_light",
   "npc_dota_hero_keeper_of_the_light",
   "npc_dota_hero_keeper_of_the_light",

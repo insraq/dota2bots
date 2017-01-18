@@ -21,7 +21,6 @@ function AbilityUsageThink()
   local leak = npcBot:GetAbilityByName(Abilities[2]);
   local mana = npcBot:GetAbilityByName(Abilities[3]);
   local ult = npcBot:GetAbilityByName(Abilities[6]);
-  local waveAndManaCombo = wave:GetManaCost() +  mana:GetManaCost();
 
   local creeps = npcBot:GetNearbyCreeps(1500, true)
   local enemyHeroes = npcBot:GetNearbyHeroes(600, true, BOT_MODE_NONE)
@@ -34,7 +33,7 @@ function AbilityUsageThink()
     end
   end
 
-  if wave:IsFullyCastable() and npcBot:GetMana() > waveAndManaCombo and npcBot:GetActiveMode() ~= BOT_MODE_RETREAT then
+  if wave:IsFullyCastable() and npcBot:GetMana() > mana:GetManaCost() and npcBot:GetActiveMode() ~= BOT_MODE_RETREAT then
     if #creeps >= 3 and #enemyHeroes <= 2 then
       local neutralCreeps = 0;
       local castTarget = nil;
@@ -53,7 +52,7 @@ function AbilityUsageThink()
     end
   end
 
-  if leak:IsFullyCastable() and npcBot:GetMana() - leak:GetManaCost() > waveAndManaCombo then
+  if leak:IsFullyCastable() and npcBot:GetMana() - leak:GetManaCost() > mana:GetManaCost() then
     local enemyHero = GetWeakestHero(leak:GetCastRange())
     if enemyHero ~= nil then
       return npcBot:Action_UseAbilityOnEntity(leak, enemyHero);
@@ -94,7 +93,7 @@ function ItemUsageThink()
       end
     end
 
-    if (item) and item:GetName() == "item_mekansm" then
+    if (item) and (item:GetName() == "item_mekansm" or item:GetName() == "item_pipe") then
       if item:IsFullyCastable() and teammates ~= nil and #teammates >=2 then
         if npcBot:GetHealth() <= 400 then
           npcBot:Action_UseAbility(item);
@@ -105,12 +104,6 @@ function ItemUsageThink()
             break;
           end
         end
-      end
-    end
-
-    if (item) and item:GetName() == "item_pipe" then
-      if (item:IsFullyCastable() and teammates ~= nil and #teammates >= 2 and #enemies >=2) then
-        npcBot:Action_UseAbility(item);
       end
     end
 
