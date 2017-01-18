@@ -2,35 +2,35 @@
 
 ----------------------------------------------------------------------------------------------------
 
-function UpdatePushLaneDesires()
-	-- { Top Middle Bottom }
-	if (DotaTime() <= 60 * 5) then
-		return { 0.5, 0.5, 0.5 };
-	end
+-- function UpdatePushLaneDesires()
+-- 	-- { Top Middle Bottom }
+-- 	if (DotaTime() <= 60 * 5) then
+-- 		return { 0, 0, 0 };
+-- 	end
 
-	return { 0, 1, 0 }
+-- 	return { 0.8, 1, 0.8 }
 
-end
-
-----------------------------------------------------------------------------------------------------
-
-function UpdateDefendLaneDesires()
-	-- { Top Middle Bottom }
-	return { 0.5, 0.5, 0.5};
-
-end
+-- end
 
 ----------------------------------------------------------------------------------------------------
 
-function UpdateFarmLaneDesires()
-	-- { Top Middle Bottom }
-	if (DotaTime() <= 60 * 5) then
-		return { 0.5, 0.5, 0.5 };
-	end
+-- function UpdateDefendLaneDesires()
+-- 	-- { Top Middle Bottom }
+-- 	return { 0.5, 0.5, 0.5};
 
-	return { 0, 1, 0 }
+-- end
 
-end
+----------------------------------------------------------------------------------------------------
+
+-- function UpdateFarmLaneDesires()
+-- 	{ Top Middle Bottom }
+-- 	if (DotaTime() <= 60 * 5) then
+-- 		return { 0, 0, 0 };
+-- 	end
+
+-- 	return { 0.5, 0.5, 0.5 }
+
+-- end
 
 ----------------------------------------------------------------------------------------------------
 
@@ -42,10 +42,10 @@ end
 
 ----------------------------------------------------------------------------------------------------
 
-function UpdateRoshanDesire()
+-- function UpdateRoshanDesire()
 
-	return 0;
+-- 	return 0;
 
-end
+-- end
 
 ----------------------------------------------------------------------------------------------------
