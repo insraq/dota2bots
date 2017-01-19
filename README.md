@@ -1,6 +1,6 @@
 # Dota 2 Bot Scripts
 
-The aim of this bot is for extreme [pushing](http://dota2.gamepedia.com/Pushing).
+The aim of this bot is for extreme [pushing](http://dota2.gamepedia.com/Pushing). You can download the bot with name "ExtremePush" on workshop.
 
 ## Completed Bots
 
