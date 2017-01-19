@@ -14,7 +14,7 @@ function Think()
   local IDs = GetTeamPlayers(GetTeam());
   for i,id in pairs(IDs) do
     if IsPlayerBot(id) then
-      SelectHero(id,MyBots[i]);
+      SelectHero(id, MyBots[i]);
     end
   end
 

@@ -12,6 +12,8 @@ local Abilities = {
   "keeper_of_the_light_spirit_form_illuminate_end",
 };
 
+local Helper = require(GetScriptDirectory() .. "/helper");
+
 function AbilityUsageThink()
 
   local npcBot = GetBot();
@@ -53,7 +55,7 @@ function AbilityUsageThink()
   end
 
   if leak:IsFullyCastable() and npcBot:GetMana() - leak:GetManaCost() > mana:GetManaCost() then
-    local enemyHero = GetWeakestHero(leak:GetCastRange())
+    local enemyHero = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', leak:GetCastRange(), true);
     if enemyHero ~= nil then
       return npcBot:Action_UseAbilityOnEntity(leak, enemyHero);
     end
@@ -62,7 +64,8 @@ function AbilityUsageThink()
   --   npcBot:Action_UseAbility(ult);
   -- end
   if mana:IsFullyCastable() then
-    return npcBot:Action_UseAbilityOnEntity(mana, npcBot);
+    local target = Helper.GetHeroWith(npcBot, 'min', 'GetMana', mana:GetCastRange(), false);
+    return npcBot:Action_UseAbilityOnEntity(mana, target);
   end
 
 end
@@ -86,7 +89,7 @@ function ItemUsageThink()
 
     if (item) and string.find(item:GetName(), "item_dagon") and enemies ~= nil and #enemies >= 1 then
       if (item:IsFullyCastable()) then
-        local weakestEnemy = GetWeakestHero(item:GetCastRange());
+        local weakestEnemy = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', item:GetCastRange(), true);
         if (weakestEnemy ~= nil) then
           npcBot:Action_UseAbilityOnEntity(item, weakestEnemy);
         end
@@ -132,23 +135,4 @@ function ItemUsageThink()
     end
   end
 
-end
-
-function GetWeakestHero(r)
-	local npcBot = GetBot();
-	local EnemyHeroes = npcBot:GetNearbyHeroes(r, true, BOT_MODE_NONE);
-	if EnemyHeroes == nil or #EnemyHeroes == 0 then
-		return nil, 10000;
-	end
-	local WeakestHero = nil;
-	local LowestHealth = 10000;
-	for _,hero in pairs(EnemyHeroes) do
-		if hero ~= nil and hero:IsAlive() then
-			if hero:GetHealth() < LowestHealth then
-				LowestHealth = hero:GetHealth();
-				WeakestHero = hero;
-			end
-		end
-	end
-	return WeakestHero, LowestHealth;
 end

@@ -1,6 +1,7 @@
-
+local Helper = require(GetScriptDirectory() .. "/helper");
 
 local tableItemsToBuy = {
+
 				"item_flask",
 				"item_clarity",
 				"item_clarity",
@@ -39,7 +40,8 @@ local tableItemsToBuy = {
 			};
 
 local tableItemsToBuySupport = {
-				-- "item_courier",
+
+				"item_courier",
 				"item_flask",
 				"item_clarity",
 				"item_clarity",
@@ -50,7 +52,7 @@ local tableItemsToBuySupport = {
 				"item_blades_of_attack",
 				"item_blades_of_attack",
 
-				-- "item_flying_courier",
+				"item_flying_courier",
 
 				"item_ring_of_regen",
 				"item_recipe_headdress",
@@ -77,6 +79,8 @@ local tableItemsToBuySupport = {
 				"item_recipe_dagon",
 			};
 
+local SupportPlayerID = nil;
+
 ----------------------------------------------------------------------------------------------------
 
 function ItemPurchaseThink()
@@ -84,7 +88,18 @@ function ItemPurchaseThink()
 	local npcBot = GetBot();
 	local buildTable = tableItemsToBuy;
 
-	if (npcBot:GetPlayerID() == 5 or npcBot:GetPlayerID() == 10) then
+	-- Assign the first bot as support
+	if SupportPlayerID == nil then
+		local players = GetTeamPlayers(GetTeam());
+		for _, v in pairs(players) do
+			if IsPlayerBot(v) then
+				SupportPlayerID = v;
+				break;
+			end
+		end
+	end
+
+	if SupportPlayerID == npcBot:GetPlayerID() then
 		buildTable = tableItemsToBuySupport;
 	end
 
@@ -97,12 +112,34 @@ function ItemPurchaseThink()
 	npcBot:SetNextItemPurchaseValue( GetItemCost( sNextItem ) );
 
 	if ( npcBot:GetGold() >= GetItemCost( sNextItem ) ) then
-		npcBot:Action_PurchaseItem( sNextItem );
-		print(npcBot:GetUnitName() .. " purchased " .. sNextItem)
-		table.remove( buildTable, 1 );
-		npcBot:SetNextItemPurchaseValue( 0 );
+
+		local function PurchaseItem()
+			npcBot:Action_PurchaseItem( sNextItem );
+			print(npcBot:GetUnitName() .. " purchased " .. sNextItem)
+			table.remove( buildTable, 1 );
+			npcBot:SetNextItemPurchaseValue( 0 );
+		end
+
+		if (IsItemPurchasedFromSecretShop(sNextItem)) then
+
+			if npcBot:DistanceFromSecretShop() < 300 then
+				PurchaseItem();
+			else
+				local secretShop = Helper.Locations.RadiantShop;
+				if (GetTeam() == TEAM_DIRE) then
+					secretShop = Helper.Locations.DireShop;
+				end
+				npcBot:Action_MoveToLocation(secretShop);
+			end
+
+		else
+			PurchaseItem();
+		end
 	end
 
+
+
 end
+
 
 ----------------------------------------------------------------------------------------------------
