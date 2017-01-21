@@ -2,11 +2,24 @@
 
 The aim of this bot is for extreme [pushing](http://dota2.gamepedia.com/Pushing). You can download the bot with name "ExtremePush" on workshop.
 
-## Completed Bots
+### v.20170121
 
-### Keeper of the Light
+**Keeper of the Light**
 
-Key Strategies:
+Huge improvements for KOTL, including:
+
+- Now bots know how to purchase from secret shop. This results in much better item builds.
+One of the KOTL will be named as support and will purchase support items: Mekansm and Pipe.
+Other bots will purchase Shadow Blade and Shivas Guard.
+- Now bots know how to purcahse and use TP Scroll.
+- Now bots will have custom ability upgrade path and will also be able to upgrade talents.
+- Chakra Magic will be casted on teammates also.
+- Illuminate will end if the casting hero is in danger. Also it will ignore neutral creeps.
+- Mana leak will be casted more aggressively.
+
+### v.20170117
+
+**Keeper of the Light**
 
 - Chakra Magic: cast when available
 - Illuminate: cast and channel when there are creeps within range. Cancel channelling when the hero is "threatened".

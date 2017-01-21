@@ -113,24 +113,27 @@ function ItemUsageThink()
     if (item) and item:GetName() == "item_tpscroll" and item:IsFullyCastable() then
 
       local tower = nil;
-
-      Helper.Print(npcBot:GetActiveMode());
+      local laneFront = nil;
 
       if npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT or npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT then
-        tower = Helper.GetOutermostTower(GetTeam(), 'BOT')
+        tower = Helper.GetOutermostTower(GetTeam(), 'BOT');
+        laneFront = GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0);
       end
 
       if npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID or npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_MID then
-        tower = Helper.GetOutermostTower(GetTeam(), 'MID')
+        tower = Helper.GetOutermostTower(GetTeam(), 'MID');
+        laneFront = GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0);
       end
 
       if npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP or npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_TOP then
-        tower = Helper.GetOutermostTower(GetTeam(), 'TOP')
+        tower = Helper.GetOutermostTower(GetTeam(), 'TOP');
+        laneFront = GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0);
       end
 
       if tower ~= nil then
-        local distance = GetUnitToLocationDistance(npcBot, tower:GetLocation());
-        if distance >= 5000.0 then
+        local distanceToTower = GetUnitToLocationDistance(npcBot, tower:GetLocation());
+        local distanceToLaneFront = GetUnitToLocationDistance(npcBot, laneFront);
+        if distanceToTower >= 5000.0 and distanceToLaneFront > 5000.0 then
           return npcBot:Action_UseAbilityOnLocation(item, tower:GetLocation());
         end
       end
@@ -162,11 +165,11 @@ function ItemUsageThink()
       end
     end
 
-    if (item) and item:GetName() == "item_glimmer_cape" then
-      if (item:IsFullyCastable() and
+    if (item) and item:GetName() == "item_invis_sword" then
+      if item:IsFullyCastable() and
         (npcBot:GetActiveMode() == BOT_MODE_EVASIVE_MANEUVERS or npcBot:GetActiveMode() == BOT_MODE_RETREAT) and
-        enemies ~= nil and #enemies >= 1 and npcBot:GetHealth() <= 200) then
-        npcBot:Action_UseAbilityOnEntity(item, npcBot);
+        enemies ~= nil and #enemies >= 1 then
+        npcBot:Action_UseAbility(item);
       end
     end
 

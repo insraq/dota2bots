@@ -22,7 +22,7 @@ local tableItemsToBuy = {
 	"item_recipe_dagon",
 
 	"item_shadow_amulet",
-	"item_cloak",
+	"item_claymore",
 
 	"item_platemail",
 	"item_mystic_staff",
