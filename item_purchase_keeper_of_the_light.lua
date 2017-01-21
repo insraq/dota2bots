@@ -21,18 +21,19 @@ local tableItemsToBuy = {
 	"item_staff_of_wizardry",
 	"item_recipe_dagon",
 
-	"item_shadow_amulet",
-	"item_claymore",
+	"item_recipe_dagon",
+	"item_recipe_dagon",
+	"item_recipe_dagon",
+	"item_recipe_dagon",
 
 	"item_platemail",
 	"item_mystic_staff",
 	"item_recipe_shivas_guard",
 
-	"item_recipe_dagon",
-	"item_recipe_dagon",
-	"item_recipe_dagon",
-	"item_recipe_dagon",
-
+	"item_shadow_amulet",
+	"item_claymore",
+	"item_ultimate_orb",
+	"item_recipe_silver_edge"
 };
 
 local tableItemsToBuySupport = {
@@ -79,6 +80,10 @@ local tableItemsToBuySupport = {
 	"item_recipe_dagon",
 	"item_recipe_dagon",
 	"item_recipe_dagon",
+
+	"item_platemail",
+	"item_mystic_staff",
+	"item_recipe_shivas_guard",
 };
 
 local abilities = {

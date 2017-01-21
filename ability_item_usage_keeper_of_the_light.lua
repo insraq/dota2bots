@@ -115,17 +115,17 @@ function ItemUsageThink()
       local tower = nil;
       local laneFront = nil;
 
-      if npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT or npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT then
+      if npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT then
         tower = Helper.GetOutermostTower(GetTeam(), 'BOT');
         laneFront = GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0);
       end
 
-      if npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID or npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_MID then
+      if npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_MID then
         tower = Helper.GetOutermostTower(GetTeam(), 'MID');
         laneFront = GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0);
       end
 
-      if npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP or npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_TOP then
+      if npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_TOP then
         tower = Helper.GetOutermostTower(GetTeam(), 'TOP');
         laneFront = GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0);
       end
@@ -134,7 +134,11 @@ function ItemUsageThink()
         local distanceToTower = GetUnitToLocationDistance(npcBot, tower:GetLocation());
         local distanceToLaneFront = GetUnitToLocationDistance(npcBot, laneFront);
         if distanceToTower >= 5000.0 and distanceToLaneFront > 5000.0 then
-          return npcBot:Action_UseAbilityOnLocation(item, tower:GetLocation());
+          local offset = Vector(-500, -500);
+          if (GetTeam() == TEAM_DIRE) then
+            offset = Vector(500, 500)
+          end
+          return npcBot:Action_UseAbilityOnLocation(item, tower:GetLocation() + offset);
         end
       end
     end
