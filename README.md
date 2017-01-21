@@ -11,7 +11,7 @@ Huge improvements for KOTL, including:
 - Now bots know how to purchase from secret shop. This results in much better item builds.
 One of the KOTL will be named as support and will purchase support items: Mekansm and Pipe.
 Other bots will purchase Shadow Blade and Shivas Guard.
-- Now bots know how to purcahse and use TP Scroll.
+- Now bots know how to purcahse and use TP Scroll. The TP logic is based on the **default** team desires. So it's more of a double-edged sword: Good decisions result in better results and bad decisions result in bigger mess.
 - Now bots will have custom ability upgrade path and will also be able to upgrade talents.
 - Chakra Magic will be casted on teammates also.
 - Illuminate will end if the casting hero is in danger. Also it will ignore neutral creeps.
