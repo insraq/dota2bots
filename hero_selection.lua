@@ -25,17 +25,17 @@ end
 function UpdateLaneAssignments()
   if ( GetTeam() == TEAM_RADIANT ) then
     return {
-      [1] = LANE_MID,
+      [1] = LANE_TOP,
       [2] = LANE_TOP,
-      [3] = LANE_TOP,
+      [3] = LANE_MID,
       [4] = LANE_BOT,
       [5] = LANE_BOT,
     };
   elseif ( GetTeam() == TEAM_DIRE ) then
     return {
-      [1] = LANE_MID,
+      [1] = LANE_TOP,
       [2] = LANE_TOP,
-      [3] = LANE_TOP,
+      [3] = LANE_MID,
       [4] = LANE_BOT,
       [5] = LANE_BOT,
     };
