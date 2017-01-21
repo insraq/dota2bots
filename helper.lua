@@ -16,8 +16,8 @@ end
 function Helper.AbilityUpgrade(npcBot, abilities)
 
   if npcBot:GetAbilityPoints() == 0 or DotaTime() < 0 or #abilities == 0 then
-		return;
-	end
+    return;
+  end
 
   for i, ability in pairs(abilities) do
 
@@ -41,11 +41,11 @@ function Helper.PurchaseTP(npcBot)
   end
 
   for i = 0, 14 do
-		local item = npcBot:GetItemInSlot(i);
+    local item = npcBot:GetItemInSlot(i);
     if (item) and item:GetName() == "item_tpscroll" then
       return;
     end
-	end
+  end
   npcBot:Action_PurchaseItem("item_tpscroll");
   npcBot:Action_PurchaseItem("item_tpscroll");
 end
