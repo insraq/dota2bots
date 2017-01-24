@@ -33,10 +33,18 @@ local tableItemsToBuy = {
   "item_shadow_amulet",
   "item_claymore",
   "item_ultimate_orb",
-  "item_recipe_silver_edge"
+  "item_recipe_silver_edge",
+
+  "item_boots",
+  "item_recipe_travel_boots",
+
+  "item_vitality_booster",
+  "item_reaver",
+  "item_recipe_heart"
 };
 
 local tableItemsToBuySupport = {
+
   "item_courier",
   "item_flask",
   "item_branches",
@@ -84,6 +92,9 @@ local tableItemsToBuySupport = {
   "item_platemail",
   "item_mystic_staff",
   "item_recipe_shivas_guard",
+
+  "item_boots",
+  "item_recipe_travel_boots",
 };
 
 local abilities = {
@@ -105,9 +116,35 @@ function ItemPurchaseThink()
 
   local npcBot = GetBot();
   local buildTable = tableItemsToBuy;
+  local hasTravelBoots = false;
+  local tpScroll = nil;
+  local phaseBoots = nil;
 
   Helper.AbilityUpgrade(npcBot, abilities);
-  Helper.PurchaseTP(npcBot);
+
+  for i = 0, 14 do
+    local item = npcBot:GetItemInSlot(i);
+    if (item) and item:GetName() == "item_travel_boots" then
+      hasTravelBoots = true;
+    end
+    if (item) and item:GetName() == "item_tpscroll" then
+      tpScroll = item;
+    end
+    if (item) and item:GetName() == "item_phase_boots" then
+      phaseBoots = item;
+    end
+  end
+
+  if hasTravelBoots then
+    if tpScroll ~= nil then
+      npcBot:Action_SellItem(tpScroll);
+    end
+    if phaseBoots ~= nil then
+      npcBot:Action_SellItem(phaseBoots);
+    end
+  else
+    Helper.PurchaseTP(npcBot);
+  end
 
   -- Assign the first bot as support
   if SupportPlayerID == nil then

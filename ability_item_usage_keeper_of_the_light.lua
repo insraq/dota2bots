@@ -18,8 +18,9 @@ function AbilityUsageThink()
 
   local npcBot = GetBot();
 
+  Helper.InspectBotMode(npcBot);
+
   local wave = npcBot:GetAbilityByName(Abilities[1]);
-  local stopWave = npcBot:GetAbilityByName(Abilities[7]);
   local leak = npcBot:GetAbilityByName(Abilities[2]);
   local mana = npcBot:GetAbilityByName(Abilities[3]);
   local ult = npcBot:GetAbilityByName(Abilities[6]);
@@ -37,14 +38,14 @@ function AbilityUsageThink()
   end
 
   if npcBot:IsChanneling() then
-    if #enemyHeroes >= 2 or npcBot:GetActiveMode() == BOT_MODE_EVASIVE_MANEUVERS  or npcBot:GetActiveMode() == BOT_MODE_RETREAT then
-      return npcBot:Action_UseAbility(stopWave);
+    if #enemyHeroes >= 2 or npcBot:GetActiveMode() == BOT_MODE_RETREAT then
+      return npcBot:Action_UseAbility(wave);
     else
       return;
     end
   end
 
-  if #enemyHeroes >= 2 or npcBot:GetActiveMode() == BOT_MODE_EVASIVE_MANEUVERS  or npcBot:GetActiveMode() == BOT_MODE_RETREAT then
+  if #enemyHeroes >= 2 or npcBot:GetActiveMode() == BOT_MODE_RETREAT then
     return considerManaLeak();
   end
 
@@ -110,23 +111,23 @@ function ItemUsageThink()
       end
     end
 
-    if (item) and item:GetName() == "item_tpscroll" and item:IsFullyCastable() then
+    if (item) and (item:GetName() == "item_tpscroll" or item:GetName() == "item_travel_boots") and item:IsFullyCastable() then
 
       local tower = nil;
       local laneFront = nil;
 
       if npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT then
-        tower = Helper.GetOutermostTower(GetTeam(), 'BOT');
+        tower = Helper.GetOutermostTower(GetTeam(), LANE_BOT);
         laneFront = GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0);
       end
 
       if npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_MID then
-        tower = Helper.GetOutermostTower(GetTeam(), 'MID');
+        tower = Helper.GetOutermostTower(GetTeam(), LANE_MID);
         laneFront = GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0);
       end
 
       if npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_TOP then
-        tower = Helper.GetOutermostTower(GetTeam(), 'TOP');
+        tower = Helper.GetOutermostTower(GetTeam(), LANE_TOP);
         laneFront = GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0);
       end
 
@@ -169,10 +170,10 @@ function ItemUsageThink()
       end
     end
 
-    if (item) and item:GetName() == "item_invis_sword" then
+    if (item) and (item:GetName() == "item_invis_sword" or item:GetName() == "item_silver_edge") then
       if item:IsFullyCastable() and
-        (npcBot:GetActiveMode() == BOT_MODE_EVASIVE_MANEUVERS or npcBot:GetActiveMode() == BOT_MODE_RETREAT) and
-        enemies ~= nil and #enemies >= 1 then
+        npcBot:GetActiveMode() == BOT_MODE_RETREAT and
+        npcBot:DistanceFromFountain() > 1500 then
         npcBot:Action_UseAbility(item);
       end
     end

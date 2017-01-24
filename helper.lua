@@ -50,9 +50,106 @@ function Helper.PurchaseTP(npcBot)
   npcBot:Action_PurchaseItem("item_tpscroll");
 end
 
+local cache = {};
+
+function Helper.HasValueChanged(key, value, callback)
+  if cache[key] ~= nil and cache[key] ~= value then
+    callback(value, cache[key])
+  end
+  cache[key] = value;
+end
+
+local botId = nil;
+
+function Helper.GetFirstBot()
+  if botId == nil then
+    local players = GetTeamPlayers(GetTeam());
+    for _, v in pairs(players) do
+      if IsPlayerBot(v) then
+        botId = v;
+        break;
+      end
+    end
+  end
+  return GetTeamMember(GetTeam(), botId);
+end
+
+function Helper.WhichLaneToPush()
+
+	local team = TEAM_RADIANT;
+	if GetTeam() == TEAM_RADIANT then
+		team = TEAM_DIRE;
+	end
+
+	if GetTower(team, TOWER_MID_1) ~= nil then
+		return LANE_MID;
+	end
+	if GetTower(team, TOWER_BOT_1) ~= nil then
+		return LANE_BOT;
+	end
+	if GetTower(team, TOWER_TOP_1) ~= nil then
+		return LANE_TOP;
+	end
+
+	if GetTower(team, TOWER_MID_2) ~= nil then
+		return LANE_MID;
+	end
+	if GetTower(team, TOWER_BOT_2) ~= nil then
+		return LANE_BOT;
+	end
+	if GetTower(team, TOWER_TOP_2) ~= nil then
+		return LANE_TOP;
+	end
+
+	if GetTower(team, TOWER_MID_3) ~= nil then
+		return LANE_MID;
+	end
+	if GetTower(team, TOWER_BOT_3) ~= nil then
+		return LANE_BOT;
+	end
+	if GetTower(team, TOWER_TOP_3) ~= nil then
+		return LANE_TOP;
+	end
+
+	return LANE_MID;
+
+end
+
+function Helper.GetPushDesire(npcBot, lane)
+
+   for i = 0,5 do
+    local item = npcBot:GetItemInSlot(i);
+    if (item) and (string.find(item:GetName(), "item_necronomicon") or item:GetName() == "item_shivas_guard" or item:GetName() == "item_mekansm" or item:GetName() == "item_pipe") then
+      if item:IsFullyCastable() and Helper.WhichLaneToPush() == lane then
+        local enemyHeroes = npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE);
+        if enemyHeroes ~= nil and #enemyHeroes > 0 then
+          return 0.1;
+        end
+        if npcBot:GetHealth() / npcBot:GetMaxHealth() < 0.5 then
+          return 0.1;
+        end
+        if GetLaneFrontAmount(GetTeam(), LANE_TOP, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_MID, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_BOT, false) < 0.3 then
+          return 0.1;
+        end
+        if GetUnitToLocationDistance(npcBot, GetLaneFrontLocation(GetTeam(), lane, 0.0)) < 900 then
+          return 0.1;
+        end
+        return Max(GetLaneFrontAmount(GetTeam(), lane, false) - 0.1, 0.1);
+      end
+    end
+  end
+  return 0.0;
+end
+
+function Helper.PushThink(npcBot, lane)
+
+  return npcBot:Action_MoveToLocation(GetLaneFrontLocation(GetTeam(), lane, 0.0));
+
+end
+
 function Helper.GetOutermostTower(team, lane)
 
-  if lane == 'TOP' then
+  if lane == LANE_TOP then
     if GetTower(team, TOWER_TOP_1) ~= nil then
       return GetTower(team, TOWER_TOP_1);
     end
@@ -65,7 +162,7 @@ function Helper.GetOutermostTower(team, lane)
     return nil;
   end
 
-  if lane == 'MID' then
+  if lane == LANE_MID then
     if GetTower(team, TOWER_MID_1) ~= nil then
       return GetTower(team, TOWER_MID_1);
     end
@@ -84,7 +181,7 @@ function Helper.GetOutermostTower(team, lane)
     return nil;
   end
 
-  if lane == 'BOT' then
+  if lane == LANE_BOT then
     if GetTower(team, TOWER_BOT_1) ~= nil then
       return GetTower(team, TOWER_BOT_1);
     end
@@ -99,6 +196,37 @@ function Helper.GetOutermostTower(team, lane)
 
   return nil;
 
+end
+
+function Helper.InspectBotMode(npcBot)
+  local MODES = {
+    "NONE",
+    "LANING",
+    "ATTACK",
+    "ROAM",
+    "RETREAT",
+    "SECRET_SHOP",
+    "SIDE_SHOP",
+    "PUSH_TOWER_TOP",
+    "PUSH_TOWER_MID",
+    "PUSH_TOWER_BOT",
+    "DEFEND_TOWER_TOP",
+    "DEFEND_TOWER_MID",
+    "DEFEND_TOWER_BOT",
+    "ASSEMBLE",
+    "TEAM_ROAM",
+    "FARM",
+    "DEFEND_ALLY",
+    "EVASIVE_MANEUVERS",
+    "ROSHAN",
+    "ITEM",
+    "WARD",
+  };
+  if (npcBot.previousMode ~= nil and npcBot.previousMode ~= npcBot:GetActiveMode()) then
+    local message = "Bot Mode Change: " .. MODES[npcBot.previousMode] .. ' => ' .. MODES[npcBot:GetActiveMode()];
+    -- Helper.Print(message);
+  end
+  npcBot.previousMode = npcBot:GetActiveMode()
 end
 
 function Helper.GetHeroWith(npcBot, comparison, attr, radius, enemy)

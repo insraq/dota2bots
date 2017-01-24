@@ -1,14 +1,10 @@
-
+local Helper = require(GetScriptDirectory() .. "/helper");
 
 ----------------------------------------------------------------------------------------------------
 
 -- function UpdatePushLaneDesires()
--- 	-- { Top Middle Bottom }
--- 	if (DotaTime() <= 60 * 5) then
--- 		return { 0, 0, 0 };
--- 	end
 
--- 	return { 0.8, 1, 0.8 }
+-- 	-- { Top Middle Bottom }
 
 -- end
 
