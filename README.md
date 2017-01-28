@@ -2,6 +2,11 @@
 
 The aim of this bot is for extreme [pushing](http://dota2.gamepedia.com/Pushing). You can download the bot with name "ExtremePush" on workshop.
 
+### v.20170128
+
+- Override default bot push mode, now it uses custom push logic.
+- Fix crashes caused by default require statemet on Mac (only tested on dev script, probably will not work on Workshop)
+
 ### v.20170121
 
 **Keeper of the Light**
