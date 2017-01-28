@@ -1,3 +1,13 @@
+-- Include this before require to fix Mac
+local dir = GetScriptDirectory();
+local function GetScriptDirectory()
+	if string.sub(dir, 1, 6) == "/Users" then
+		return string.match(dir, '.*/(.+)')
+	end
+	return dir;
+end
+-----------------------------------------
+
 local inspect = require(GetScriptDirectory() .. "/inspect");
 
 local Helper = {};
@@ -22,7 +32,6 @@ function Helper.AbilityUpgrade(npcBot, abilities)
   for i, ability in pairs(abilities) do
 
     local handle = npcBot:GetAbilityByName(ability);
-
     if handle ~= nil then
       if handle:GetLevel() == handle:GetMaxLevel() then
         table.remove(abilities, i);
@@ -125,25 +134,25 @@ function Helper.GetPushDesire(npcBot, lane)
         if enemyHeroes ~= nil and #enemyHeroes > 0 then
           return 0.1;
         end
-        if npcBot:GetHealth() / npcBot:GetMaxHealth() < 0.5 then
-          return 0.1;
+        if npcBot:GetHealth() < 500 then
+          return 0.25;
         end
         if GetLaneFrontAmount(GetTeam(), LANE_TOP, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_MID, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_BOT, false) < 0.3 then
-          return 0.1;
+          return 0.25;
         end
         if GetUnitToLocationDistance(npcBot, GetLaneFrontLocation(GetTeam(), lane, 0.0)) < 900 then
-          return 0.1;
+          return 0.25;
         end
         return Max(GetLaneFrontAmount(GetTeam(), lane, false) - 0.1, 0.1);
       end
     end
   end
-  return 0.0;
+  return 0.1;
 end
 
 function Helper.PushThink(npcBot, lane)
 
-  return npcBot:Action_MoveToLocation(GetLaneFrontLocation(GetTeam(), lane, 0.0));
+  return npcBot:Action_MoveToLocation(GetLaneFrontLocation(GetTeam(), lane, 900) + RandomVector(450));
 
 end
 

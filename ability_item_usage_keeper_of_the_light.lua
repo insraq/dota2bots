@@ -1,4 +1,14 @@
-----------------------------------------------------------------------------------------------------
+-- Include this before require to fix Mac
+local dir = GetScriptDirectory();
+local function GetScriptDirectory()
+	if string.sub(dir, 1, 6) == "/Users" then
+		return string.match(dir, '.*/(.+)')
+	end
+	return dir;
+end
+-----------------------------------------
+
+local Helper = require(GetScriptDirectory() .. "/helper");
 
 local Abilities = {
   "keeper_of_the_light_illuminate",
@@ -11,8 +21,6 @@ local Abilities = {
   "keeper_of_the_light_spirit_form_illuminate",
   "keeper_of_the_light_spirit_form_illuminate_end",
 };
-
-local Helper = require(GetScriptDirectory() .. "/helper");
 
 function AbilityUsageThink()
 
