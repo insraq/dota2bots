@@ -83,7 +83,7 @@ function Helper.GetFirstBot()
   return GetTeamMember(GetTeam(), botId);
 end
 
-function Helper.WhichLaneToPush()
+function Helper.TeamPushLane()
 
 	local team = TEAM_RADIANT;
 	if GetTeam() == TEAM_RADIANT then
@@ -120,7 +120,48 @@ function Helper.WhichLaneToPush()
 		return LANE_TOP;
 	end
 
+  if GetBarracks(team, BARRACKS_MID_MELEE) ~= nil or GetBarracks(team, BARRACKS_MID_RANGED) ~= nil then
+    return LANE_MID;
+  end
+
+  if GetBarracks(team, BARRACKS_BOT_MELEE) ~= nil or GetBarracks(team, BARRACKS_BOT_RANGED) ~= nil then
+    return LANE_BOT;
+  end
+
+  if GetBarracks(team, BARRACKS_TOP_MELEE) ~= nil or GetBarracks(team, BARRACKS_TOP_RANGED) ~= nil then
+    return LANE_TOP;
+  end
+
 	return LANE_MID;
+
+end
+
+function Helper.SeparatePushLane(npcBot)
+
+	local team = TEAM_RADIANT;
+	if GetTeam() == TEAM_RADIANT then
+		team = TEAM_DIRE;
+	end
+
+  if npcBot:GetAssignedLane() == LANE_MID and
+    (GetTower(team, TOWER_MID_1) ~= nil or
+    GetTower(team, TOWER_MID_2) ~= nil) then
+		return LANE_MID;
+	end
+
+  if npcBot:GetAssignedLane() == LANE_BOT and
+    (GetTower(team, TOWER_BOT_1) ~= nil or
+    GetTower(team, TOWER_BOT_2) ~= nil) then
+		return LANE_BOT;
+	end
+
+  if npcBot:GetAssignedLane() == LANE_TOP and
+    (GetTower(team, TOWER_TOP_1) ~= nil or
+    GetTower(team, TOWER_TOP_2) ~= nil) then
+		return LANE_TOP;
+	end
+
+  return Helper.TeamPushLane();
 
 end
 
@@ -128,8 +169,8 @@ function Helper.GetPushDesire(npcBot, lane)
 
    for i = 0,5 do
     local item = npcBot:GetItemInSlot(i);
-    if (item) and (string.find(item:GetName(), "item_necronomicon") or item:GetName() == "item_shivas_guard" or item:GetName() == "item_mekansm" or item:GetName() == "item_pipe") then
-      if item:IsFullyCastable() and Helper.WhichLaneToPush() == lane then
+    if (item) and (string.find(item:GetName(), "item_necronomicon") or item:GetName() == "item_shivas_guard" or item:GetName() == "item_mekansm" or item:GetName() == "item_pipe" or item:GetName() == "item_heart" ) then
+      if item:IsFullyCastable() and Helper.SeparatePushLane(npcBot) == lane then
         local enemyHeroes = npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE);
         if enemyHeroes ~= nil and #enemyHeroes > 0 then
           return 0.1;
@@ -151,8 +192,14 @@ function Helper.GetPushDesire(npcBot, lane)
 end
 
 function Helper.PushThink(npcBot, lane)
-
-  return npcBot:Action_MoveToLocation(GetLaneFrontLocation(GetTeam(), lane, 900) + RandomVector(450));
+  local offset = 0;
+  if (GetTeam() == TEAM_RADIANT) then
+    offset = -500;
+  end
+  if (GetTeam() == TEAM_DIRE) then
+    offset = 500;
+  end
+  return npcBot:Action_MoveToLocation(GetLaneFrontLocation(GetTeam(), lane, offset) + RandomVector(400));
 
 end
 
