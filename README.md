@@ -6,7 +6,10 @@ The aim of this bot is for extreme [pushing](http://dota2.gamepedia.com/Pushing)
 
 ### v.20170128
 
+**Keeper of the Light**
+
 - Override default bot push mode, now it uses custom push logic.
+- Improve item builds for late game.
 - Fix crashes caused by default require statemet on Mac (only tested on dev script, probably will not work on Workshop)
 
 ### v.20170121
