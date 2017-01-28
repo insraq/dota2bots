@@ -169,8 +169,8 @@ function Helper.GetPushDesire(npcBot, lane)
 
    for i = 0,5 do
     local item = npcBot:GetItemInSlot(i);
-    if (item) and (string.find(item:GetName(), "item_necronomicon") or item:GetName() == "item_shivas_guard" or item:GetName() == "item_mekansm" or item:GetName() == "item_pipe" or item:GetName() == "item_heart" ) then
-      if item:IsFullyCastable() and Helper.SeparatePushLane(npcBot) == lane then
+    if (item) and (string.find(item:GetName(), "item_necronomicon") or item:GetName() == "item_mekansm") then
+      if Helper.SeparatePushLane(npcBot) == lane then
         local enemyHeroes = npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE);
         if enemyHeroes ~= nil and #enemyHeroes > 0 then
           return 0.1;
@@ -184,7 +184,7 @@ function Helper.GetPushDesire(npcBot, lane)
         if GetUnitToLocationDistance(npcBot, GetLaneFrontLocation(GetTeam(), lane, 0.0)) < 900 then
           return 0.25;
         end
-        return Max(GetLaneFrontAmount(GetTeam(), lane, false) - 0.1, 0.1);
+        return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 1);
       end
     end
   end
