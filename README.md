@@ -4,6 +4,14 @@ The aim of this bot is for extreme [pushing](http://dota2.gamepedia.com/Pushing)
 
 **You might have to unsubscribe and resubscribe to update your bot scripts to the latest version.**
 
+### v.20170129
+
+**Keeper of the Light**
+
+- Improve push mode overrides with a better strategy
+- Fix some TP Scroll related issues
+- Improve Travel Boots usage
+
 ### v.20170128
 
 **Keeper of the Light**

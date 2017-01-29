@@ -1,10 +1,10 @@
 -- Include this before require to fix Mac
 local dir = GetScriptDirectory();
 local function GetScriptDirectory()
-	if string.sub(dir, 1, 6) == "/Users" then
-		return string.match(dir, '.*/(.+)')
-	end
-	return dir;
+  if string.sub(dir, 1, 6) == "/Users" then
+    return string.match(dir, '.*/(.+)')
+  end
+  return dir;
 end
 -----------------------------------------
 
@@ -85,81 +85,75 @@ end
 
 function Helper.TeamPushLane()
 
-	local team = TEAM_RADIANT;
-	if GetTeam() == TEAM_RADIANT then
-		team = TEAM_DIRE;
-	end
+  local team = TEAM_RADIANT;
+  if GetTeam() == TEAM_RADIANT then
+    team = TEAM_DIRE;
+  end
 
-	if GetTower(team, TOWER_MID_1) ~= nil then
-		return LANE_MID;
-	end
-	if GetTower(team, TOWER_BOT_1) ~= nil then
-		return LANE_BOT;
-	end
-	if GetTower(team, TOWER_TOP_1) ~= nil then
-		return LANE_TOP;
-	end
-
-	if GetTower(team, TOWER_MID_2) ~= nil then
-		return LANE_MID;
-	end
-	if GetTower(team, TOWER_BOT_2) ~= nil then
-		return LANE_BOT;
-	end
-	if GetTower(team, TOWER_TOP_2) ~= nil then
-		return LANE_TOP;
-	end
-
-	if GetTower(team, TOWER_MID_3) ~= nil then
-		return LANE_MID;
-	end
-	if GetTower(team, TOWER_BOT_3) ~= nil then
-		return LANE_BOT;
-	end
-	if GetTower(team, TOWER_TOP_3) ~= nil then
-		return LANE_TOP;
-	end
-
-  if GetBarracks(team, BARRACKS_MID_MELEE) ~= nil or GetBarracks(team, BARRACKS_MID_RANGED) ~= nil then
+  if GetTower(team, TOWER_MID_1) ~= nil then
     return LANE_MID;
   end
-
-  if GetBarracks(team, BARRACKS_BOT_MELEE) ~= nil or GetBarracks(team, BARRACKS_BOT_RANGED) ~= nil then
+  if GetTower(team, TOWER_BOT_1) ~= nil then
     return LANE_BOT;
   end
-
-  if GetBarracks(team, BARRACKS_TOP_MELEE) ~= nil or GetBarracks(team, BARRACKS_TOP_RANGED) ~= nil then
+  if GetTower(team, TOWER_TOP_1) ~= nil then
     return LANE_TOP;
   end
 
-	return LANE_MID;
+  if GetTower(team, TOWER_MID_2) ~= nil then
+    return LANE_MID;
+  end
+  if GetTower(team, TOWER_BOT_2) ~= nil then
+    return LANE_BOT;
+  end
+  if GetTower(team, TOWER_TOP_2) ~= nil then
+    return LANE_TOP;
+  end
+
+  if GetTower(team, TOWER_MID_3) ~= nil or
+    GetBarracks(team, BARRACKS_MID_MELEE) ~= nil or
+    GetBarracks(team, BARRACKS_MID_RANGED) ~= nil then
+    return LANE_MID;
+  end
+  if GetTower(team, TOWER_BOT_3) ~= nil or 
+    GetBarracks(team, BARRACKS_BOT_MELEE) ~= nil or
+    GetBarracks(team, BARRACKS_BOT_RANGED) ~= nil then
+    return LANE_BOT;
+  end
+  if GetTower(team, TOWER_TOP_3) ~= nil or
+    GetBarracks(team, BARRACKS_TOP_MELEE) ~= nil or
+    GetBarracks(team, BARRACKS_TOP_RANGED) ~= nil then
+    return LANE_TOP;
+  end
+
+  return LANE_MID;
 
 end
 
 function Helper.SeparatePushLane(npcBot)
 
-	local team = TEAM_RADIANT;
-	if GetTeam() == TEAM_RADIANT then
-		team = TEAM_DIRE;
-	end
+  local team = TEAM_RADIANT;
+  if GetTeam() == TEAM_RADIANT then
+    team = TEAM_DIRE;
+  end
 
   if npcBot:GetAssignedLane() == LANE_MID and
     (GetTower(team, TOWER_MID_1) ~= nil or
     GetTower(team, TOWER_MID_2) ~= nil) then
-		return LANE_MID;
-	end
+    return LANE_MID;
+  end
 
   if npcBot:GetAssignedLane() == LANE_BOT and
     (GetTower(team, TOWER_BOT_1) ~= nil or
     GetTower(team, TOWER_BOT_2) ~= nil) then
-		return LANE_BOT;
-	end
+    return LANE_BOT;
+  end
 
   if npcBot:GetAssignedLane() == LANE_TOP and
     (GetTower(team, TOWER_TOP_1) ~= nil or
     GetTower(team, TOWER_TOP_2) ~= nil) then
-		return LANE_TOP;
-	end
+    return LANE_TOP;
+  end
 
   return Helper.TeamPushLane();
 
@@ -194,12 +188,12 @@ end
 function Helper.PushThink(npcBot, lane)
   local offset = 0;
   if (GetTeam() == TEAM_RADIANT) then
-    offset = -500;
+    offset = -800;
   end
   if (GetTeam() == TEAM_DIRE) then
-    offset = 500;
+    offset = 800;
   end
-  return npcBot:Action_MoveToLocation(GetLaneFrontLocation(GetTeam(), lane, offset) + RandomVector(400));
+  return npcBot:Action_MoveToLocation(GetLaneFrontLocation(GetTeam(), lane, offset) + RandomVector(600));
 
 end
 
@@ -215,7 +209,6 @@ function Helper.GetOutermostTower(team, lane)
     if GetTower(team, TOWER_TOP_3) ~= nil then
       return GetTower(team, TOWER_TOP_3);
     end
-    return nil;
   end
 
   if lane == LANE_MID then
@@ -234,7 +227,6 @@ function Helper.GetOutermostTower(team, lane)
     if GetTower(team, TOWER_BASE_2) ~= nil then
       return GetTower(team, TOWER_BASE_2);
     end
-    return nil;
   end
 
   if lane == LANE_BOT then
@@ -247,42 +239,10 @@ function Helper.GetOutermostTower(team, lane)
     if GetTower(team, TOWER_BOT_3) ~= nil then
       return GetTower(team, TOWER_BOT_3);
     end
-    return nil;
   end
 
-  return nil;
+  return GetAncient(team);
 
-end
-
-function Helper.InspectBotMode(npcBot)
-  local MODES = {
-    "NONE",
-    "LANING",
-    "ATTACK",
-    "ROAM",
-    "RETREAT",
-    "SECRET_SHOP",
-    "SIDE_SHOP",
-    "PUSH_TOWER_TOP",
-    "PUSH_TOWER_MID",
-    "PUSH_TOWER_BOT",
-    "DEFEND_TOWER_TOP",
-    "DEFEND_TOWER_MID",
-    "DEFEND_TOWER_BOT",
-    "ASSEMBLE",
-    "TEAM_ROAM",
-    "FARM",
-    "DEFEND_ALLY",
-    "EVASIVE_MANEUVERS",
-    "ROSHAN",
-    "ITEM",
-    "WARD",
-  };
-  if (npcBot.previousMode ~= nil and npcBot.previousMode ~= npcBot:GetActiveMode()) then
-    local message = "Bot Mode Change: " .. MODES[npcBot.previousMode] .. ' => ' .. MODES[npcBot:GetActiveMode()];
-    -- Helper.Print(message);
-  end
-  npcBot.previousMode = npcBot:GetActiveMode()
 end
 
 function Helper.GetHeroWith(npcBot, comparison, attr, radius, enemy)
