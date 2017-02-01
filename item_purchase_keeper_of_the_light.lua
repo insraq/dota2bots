@@ -184,8 +184,8 @@ function ItemPurchaseThink()
     local function PurchaseItem()
       npcBot:Action_PurchaseItem( sNextItem );
       print(npcBot:GetUnitName() .. " purchased " .. sNextItem)
-      table.remove( buildTable, 1 );
-      npcBot:SetNextItemPurchaseValue( 0 );
+      table.remove(buildTable, 1);
+      npcBot:SetNextItemPurchaseValue(0);
     end
 
     if (IsItemPurchasedFromSecretShop(sNextItem)) then

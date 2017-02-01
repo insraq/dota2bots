@@ -80,7 +80,7 @@ function Helper.GetFirstBot()
       end
     end
   end
-  return GetTeamMember(GetTeam(), botId);
+  return GetTeamMember(botId);
 end
 
 function Helper.TeamPushLane()

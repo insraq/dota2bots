@@ -32,8 +32,8 @@ function AbilityUsageThink()
   local mana = npcBot:GetAbilityByName(Abilities[3]);
   local ult = npcBot:GetAbilityByName(Abilities[6]);
 
-  local creeps = npcBot:GetNearbyCreeps(1500, true)
-  local enemyHeroes = npcBot:GetNearbyHeroes(600, true, BOT_MODE_NONE)
+  local creeps = npcBot:GetNearbyLaneCreeps(1500, true);
+  local enemyHeroes = npcBot:GetNearbyHeroes(600, true, BOT_MODE_NONE);
 
   local function considerManaLeak()
     if leak:IsFullyCastable() and npcBot:GetMana() - leak:GetManaCost() > mana:GetManaCost() then
@@ -55,23 +55,11 @@ function AbilityUsageThink()
     return considerManaLeak();
   end
 
-  if wave:IsFullyCastable() and npcBot:GetMana() > mana:GetManaCost() and npcBot:GetActiveMode() ~= BOT_MODE_RETREAT then
-    if #creeps >= 3 then
-      local neutralCreeps = 0;
-      local castTarget = nil;
-      for _, creep in pairs(creeps) do
-        if (creep ~= nil) then
-          if string.find(creep:GetUnitName(), 'neutral') then
-            neutralCreeps = neutralCreeps + 1;
-          else
-            castTarget = creep;
-          end
-        end
-      end
-      if castTarget ~= nil and #creeps - neutralCreeps > 0 then
-        return npcBot:Action_UseAbilityOnLocation(wave, castTarget:GetLocation());
-      end
-    end
+  if wave:IsFullyCastable() and
+    npcBot:GetMana() - wave:GetManaCost() > mana:GetManaCost() and
+    npcBot:GetActiveMode() ~= BOT_MODE_RETREAT and
+    #creeps >= 3 then
+    return npcBot:Action_UseAbilityOnLocation(wave, creeps[1]:GetLocation());
   end
 
   considerManaLeak();
