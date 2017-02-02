@@ -4,6 +4,16 @@ The aim of this bot is for extreme [pushing](http://dota2.gamepedia.com/Pushing)
 
 **You might have to unsubscribe and resubscribe to update your bot scripts to the latest version.**
 
+### v.20170202
+
+**Venomancer**
+
+- Added Venomancer (item builds, ability usages, etc)
+
+**General**
+
+- Tweak the team push logic
+
 ### v.20170129
 
 **Keeper of the Light**
