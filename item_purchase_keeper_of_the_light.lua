@@ -126,35 +126,9 @@ function ItemPurchaseThink()
 
   local npcBot = GetBot();
   local buildTable = tableItemsToBuy;
-  local hasTravelBoots = false;
-  local tpScroll = nil;
-  local phaseBoots = nil;
 
   Helper.AbilityUpgrade(npcBot, abilities);
-
-  for i = 0, 14 do
-    local item = npcBot:GetItemInSlot(i);
-    if (item) and item:GetName() == "item_travel_boots" then
-      hasTravelBoots = true;
-    end
-    if (item) and item:GetName() == "item_tpscroll" then
-      tpScroll = item;
-    end
-    if (item) and item:GetName() == "item_phase_boots" then
-      phaseBoots = item;
-    end
-  end
-
-  if hasTravelBoots then
-    if tpScroll ~= nil then
-      npcBot:Action_SellItem(tpScroll);
-    end
-    if phaseBoots ~= nil then
-      npcBot:Action_SellItem(phaseBoots);
-    end
-  else
-    Helper.PurchaseTP(npcBot);
-  end
+  Helper.PurchaseBootsAndTP(npcBot);
 
   -- Assign the first bot as support
   if SupportPlayerID == nil then
@@ -171,41 +145,7 @@ function ItemPurchaseThink()
     buildTable = tableItemsToBuySupport;
   end
 
-  if ( #buildTable == 0 ) then
-    npcBot:SetNextItemPurchaseValue( 0 );
-    return;
-  end
-
-  local sNextItem = buildTable[1];
-  npcBot:SetNextItemPurchaseValue( GetItemCost( sNextItem ) );
-
-  if ( npcBot:GetGold() >= GetItemCost( sNextItem ) ) then
-
-    local function PurchaseItem()
-      npcBot:Action_PurchaseItem( sNextItem );
-      print(npcBot:GetUnitName() .. " purchased " .. sNextItem)
-      table.remove(buildTable, 1);
-      npcBot:SetNextItemPurchaseValue(0);
-    end
-
-    if (IsItemPurchasedFromSecretShop(sNextItem)) then
-
-      if npcBot:DistanceFromSecretShop() < 300 then
-        PurchaseItem();
-      else
-        local secretShop = Helper.Locations.RadiantShop;
-        if (GetTeam() == TEAM_DIRE) then
-          secretShop = Helper.Locations.DireShop;
-        end
-        npcBot:Action_MoveToLocation(secretShop);
-      end
-
-    else
-      PurchaseItem();
-    end
-  end
-
-
+  Helper.PurchaseItems(npcBot, buildTable);
 
 end
 

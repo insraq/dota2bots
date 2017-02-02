@@ -103,6 +103,15 @@ function ItemUsageThink()
       end
     end
 
+    if (item) and
+      (item:GetName() == "item_orchid" or item:GetName() == "item_recipe_bloodthorn") and
+      item:IsFullyCastable() then
+      local weakestEnemy = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', item:GetCastRange(), true);
+      if (weakestEnemy ~= nil) then
+        npcBot:Action_UseAbilityOnEntity(item, weakestEnemy);
+      end
+    end
+
     if (item) and item:GetName() == "item_courier" then
       if (item:IsFullyCastable()) then
         npcBot:Action_UseAbility(item);
