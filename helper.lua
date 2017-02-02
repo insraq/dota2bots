@@ -19,7 +19,7 @@ Helper.Locations = {
   TopShop = Vector(-7236,4444),
 }
 
-function Helper.Print(val)
+function Helper.PP(val)
   print(inspect(val))
 end
 
@@ -243,8 +243,8 @@ function Helper.GetPushDesire(npcBot, lane)
         if GetLaneFrontAmount(GetTeam(), LANE_TOP, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_MID, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_BOT, false) < 0.3 then
           return 0.25;
         end
-        if GetUnitToLocationDistance(npcBot, GetLaneFrontLocation(GetTeam(), lane, 0.0)) < 900 then
-          return 0.25;
+        if GetUnitToLocationDistance(npcBot, GetLaneFrontLocation(GetTeam(), lane, 0.0)) < 500 then
+          return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.5);
         end
         return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.9);
       end

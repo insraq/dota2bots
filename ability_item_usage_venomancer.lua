@@ -40,14 +40,18 @@ function AbilityUsageThink()
   end
 
   if ward:IsFullyCastable() and
+    (#npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE) > 0 or
+      #npcBot:GetNearbyTowers(1500, true) > 0 or
+      #npcBot:GetNearbyBarracks(1500, true) > 0 or
+      npcBot:GetManaRegen() > 4
+    ) and
     npcBot:GetMana() - ward:GetManaCost() > nova:GetManaCost() and
     ward:GetLevel() >= 2 then
     npcBot:Action_UseAbilityOnLocation(ward, npcBot:GetLocation() + Helper.RandomForwardVector(ward:GetCastRange()));
   end
 
   local enemyHeroes = npcBot:GetNearbyHeroes(575, true, BOT_MODE_NONE);
-  if enemyHeroes ~= nil and
-    (#enemyHeroes >= 3 or (#enemyHeroes >= 2 and npcBot:GetActiveMode() == BOT_MODE_ATTACK)) then
+  if #enemyHeroes >= 3 or (#enemyHeroes >= 2 and npcBot:GetActiveMode() == BOT_MODE_ATTACK) then
     npcBot:Action_UseAbility(nova);
   end
 
