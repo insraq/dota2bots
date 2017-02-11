@@ -17,7 +17,7 @@ end
 function OnStart()
 
   local npcBot = GetBot();
-  npcBot:Action_Chat("Pushing Bottom", false);
+  npcBot:ActionImmediate_Chat("Pushing Bottom", false);
 
 end
 

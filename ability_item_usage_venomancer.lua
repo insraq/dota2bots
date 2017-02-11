@@ -26,7 +26,7 @@ function AbilityUsageThink()
   local ward = npcBot:GetAbilityByName(Abilities[3]);
   local nova = npcBot:GetAbilityByName(Abilities[4]);
 
-  if npcBot:IsChanneling() then
+  if npcBot:IsChanneling() or npcBot:GetCurrentActionType() == BOT_ACTION_TYPE_USE_ABILITY then
     return;
   end
 
@@ -35,7 +35,7 @@ function AbilityUsageThink()
     npcBot:GetActiveMode() == BOT_MODE_ATTACK then
     local target = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', gale:GetCastRange(), true);
     if target ~= nil then
-      npcBot:Action_UseAbilityOnLocation(gale, target:GetLocation());
+      return npcBot:Action_UseAbilityOnLocation(gale, target:GetLocation());
     end
   end
 
@@ -43,16 +43,21 @@ function AbilityUsageThink()
     (#npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE) > 0 or
       #npcBot:GetNearbyTowers(1500, true) > 0 or
       #npcBot:GetNearbyBarracks(1500, true) > 0 or
-      npcBot:GetManaRegen() > 4
+      npcBot:GetManaRegen() > 4 or
+      npcBot:GetActiveMode() == BOT_MODE_ATTACK or
+      npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT or
+      npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_MID or
+      npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_TOP or
+      npcBot:GetActiveMode() == BOT_MODE_DEFEND_ALLY
     ) and
     npcBot:GetMana() - ward:GetManaCost() > nova:GetManaCost() and
     ward:GetLevel() >= 2 then
-    npcBot:Action_UseAbilityOnLocation(ward, npcBot:GetLocation() + Helper.RandomForwardVector(ward:GetCastRange()));
+    return npcBot:Action_UseAbilityOnLocation(ward, npcBot:GetLocation() + Helper.RandomForwardVector(ward:GetCastRange()));
   end
 
   local enemyHeroes = npcBot:GetNearbyHeroes(575, true, BOT_MODE_NONE);
   if #enemyHeroes >= 3 or (#enemyHeroes >= 2 and npcBot:GetActiveMode() == BOT_MODE_ATTACK) then
-    npcBot:Action_UseAbility(nova);
+    return npcBot:Action_UseAbility(nova);
   end
 
 end

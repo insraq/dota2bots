@@ -36,7 +36,7 @@ function Helper.AbilityUpgrade(npcBot, abilities)
       if handle:GetLevel() == handle:GetMaxLevel() then
         table.remove(abilities, i);
       elseif handle:CanAbilityBeUpgraded() then
-        npcBot:Action_LevelAbility(ability);
+        npcBot:ActionImmediate_LevelAbility(ability);
       end
     end
 
@@ -64,10 +64,10 @@ function Helper.PurchaseBootsAndTP(npcBot)
 
   if hasTravelBoots then
     if tpScroll ~= nil then
-      npcBot:Action_SellItem(tpScroll);
+      npcBot:ActionImmediate_SellItem(tpScroll);
     end
     if phaseBoots ~= nil then
-      npcBot:Action_SellItem(phaseBoots);
+      npcBot:ActionImmediate_SellItem(phaseBoots);
     end
   else
     Helper.PurchaseTP(npcBot);
@@ -87,7 +87,7 @@ function Helper.PurchaseItems(npcBot, buildTable)
   if ( npcBot:GetGold() >= GetItemCost( sNextItem ) ) then
 
     local function PurchaseItem()
-      npcBot:Action_PurchaseItem( sNextItem );
+      npcBot:ActionImmediate_PurchaseItem( sNextItem );
       print(npcBot:GetUnitName() .. " purchased " .. sNextItem)
       table.remove(buildTable, 1);
       npcBot:SetNextItemPurchaseValue(0);
@@ -102,7 +102,7 @@ function Helper.PurchaseItems(npcBot, buildTable)
         if (GetTeam() == TEAM_DIRE) then
           secretShop = Helper.Locations.DireShop;
         end
-        npcBot:Action_MoveToLocation(secretShop);
+        -- npcBot:Action_MoveToLocation(secretShop);
       end
 
     else
@@ -123,8 +123,8 @@ function Helper.PurchaseTP(npcBot)
       return;
     end
   end
-  npcBot:Action_PurchaseItem("item_tpscroll");
-  npcBot:Action_PurchaseItem("item_tpscroll");
+  npcBot:ActionImmediate_PurchaseItem("item_tpscroll");
+  npcBot:ActionImmediate_PurchaseItem("item_tpscroll");
 end
 
 local cache = {};
