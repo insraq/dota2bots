@@ -254,7 +254,10 @@ function Helper.GetPushDesire(npcBot, lane)
 end
 
 function Helper.PushThink(npcBot, lane)
-  return npcBot:Action_MoveToLocation(
+  if npcBot:IsChanneling() or npcBot:GetCurrentActionType() == BOT_ACTION_TYPE_USE_ABILITY then
+    return;
+  end
+  npcBot:Action_MoveToLocation(
     GetLaneFrontLocation(GetTeam(), lane, 0) - Helper.RandomForwardVector(500)
   );
 end
