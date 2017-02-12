@@ -28,13 +28,13 @@ function ItemUsageThink()
     local item = npcBot:GetItemInSlot(i);
 
     if (item) and string.find(item:GetName(), "item_necronomicon") and item:IsFullyCastable() and enemies ~= nil and #enemies >= 1 then
-      npcBot:Action_UseAbility(item);
+      npcBot:ActionPush_UseAbility(item);
     end
 
     if (item) and string.find(item:GetName(), "item_dagon") and item:IsFullyCastable() and enemies ~= nil and #enemies >= 1 then
       local weakestEnemy = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', item:GetCastRange(), true);
       if (weakestEnemy ~= nil) then
-        npcBot:Action_UseAbilityOnEntity(item, weakestEnemy);
+        npcBot:ActionPush_UseAbilityOnEntity(item, weakestEnemy);
       end
     end
 
@@ -61,34 +61,38 @@ function ItemUsageThink()
         if (GetTeam() == TEAM_DIRE) then
           offset = Vector(500, 500)
         end
-        npcBot:Action_UseAbilityOnLocation(item, target + offset);
+        npcBot:ActionPush_UseAbilityOnLocation(item, target + offset);
       end
     end
 
     if (item) and (item:GetName() == "item_mekansm" or item:GetName() == "item_pipe") and item:IsFullyCastable() and teammates ~= nil and #teammates >=2 then
       if npcBot:GetHealth() <= 400 then
-        npcBot:Action_UseAbility(item);
+        npcBot:ActionPush_UseAbility(item);
       end
       for _, hero in pairs(teammates) do
         if (hero:GetHealth() <= 400) then
-          npcBot:Action_UseAbility(item);
+          npcBot:ActionPush_UseAbility(item);
         end
       end
     end
 
     if (item) and item:GetName() == "item_phase_boots" and item:IsFullyCastable() then
-      npcBot:Action_UseAbility(item);
+      npcBot:ActionPush_UseAbility(item);
+    end
+
+    if (item) and item:GetName() == "item_arcane_boots" and item:IsFullyCastable() then
+      npcBot:ActionPush_UseAbility(item);
     end
 
     if (item) and item:GetName() == "item_shivas_guard" and item:IsFullyCastable() and enemies ~= nil and #enemies >= 2 then
-      npcBot:Action_UseAbility(item);
+      npcBot:ActionPush_UseAbility(item);
     end
 
     if (item) and (item:GetName() == "item_invis_sword" or item:GetName() == "item_silver_edge") and
       item:IsFullyCastable() and
       npcBot:GetActiveMode() == BOT_MODE_RETREAT and
       npcBot:DistanceFromFountain() > 1500 then
-      npcBot:Action_UseAbility(item);
+      npcBot:ActionPush_UseAbility(item);
     end
 
     if (item) and
@@ -96,20 +100,20 @@ function ItemUsageThink()
       item:IsFullyCastable() then
       local weakestEnemy = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', item:GetCastRange(), true);
       if (weakestEnemy ~= nil) then
-        npcBot:Action_UseAbilityOnEntity(item, weakestEnemy);
+        npcBot:ActionPush_UseAbilityOnEntity(item, weakestEnemy);
       end
     end
 
     if (item) and item:GetName() == "item_courier" and item:IsFullyCastable() then
-      npcBot:Action_UseAbility(item);
+      npcBot:ActionPush_UseAbility(item);
     end
 
     if (item) and item:GetName() == "item_flask" and item:IsFullyCastable() and npcBot:GetHealth() <= 200 then
-      npcBot:Action_UseAbilityOnEntity(item, npcBot);
+      npcBot:ActionPush_UseAbilityOnEntity(item, npcBot);
     end
 
     if (item) and item:GetName() == "item_clarity" and item:IsFullyCastable() and npcBot:GetMana() <= 200 then
-      npcBot:Action_UseAbilityOnEntity(item, npcBot);
+      npcBot:ActionPush_UseAbilityOnEntity(item, npcBot);
     end
   end
 

@@ -35,7 +35,7 @@ function AbilityUsageThink()
     npcBot:GetActiveMode() == BOT_MODE_ATTACK then
     local target = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', gale:GetCastRange(), true);
     if target ~= nil then
-      return npcBot:Action_UseAbilityOnLocation(gale, target:GetLocation());
+      return npcBot:ActionPush_UseAbilityOnLocation(gale, target:GetLocation());
     end
   end
 
@@ -52,16 +52,20 @@ function AbilityUsageThink()
     ) and
     npcBot:GetMana() - ward:GetManaCost() > nova:GetManaCost() and
     ward:GetLevel() >= 2 then
-    return npcBot:Action_UseAbilityOnLocation(ward, npcBot:GetLocation() + Helper.RandomForwardVector(ward:GetCastRange()));
+    return npcBot:ActionPush_UseAbilityOnLocation(ward, npcBot:GetLocation() + Helper.RandomForwardVector(ward:GetCastRange()));
   end
 
   local enemyHeroes = npcBot:GetNearbyHeroes(575, true, BOT_MODE_NONE);
   if #enemyHeroes >= 3 or (#enemyHeroes >= 2 and npcBot:GetActiveMode() == BOT_MODE_ATTACK) then
-    return npcBot:Action_UseAbility(nova);
+    return npcBot:ActionPush_UseAbility(nova);
   end
 
 end
 
 function ItemUsageThink()
   ability_item_usage_generic.ItemUsageThink();
+end
+
+function BuybackUsageThink()
+  ability_item_usage_generic.BuybackUsageThink();
 end

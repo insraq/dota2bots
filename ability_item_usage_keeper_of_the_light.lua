@@ -39,14 +39,14 @@ function AbilityUsageThink()
     if leak:IsFullyCastable() and npcBot:GetMana() - leak:GetManaCost() > mana:GetManaCost() then
       local enemyHero = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', leak:GetCastRange(), true);
       if enemyHero ~= nil then
-        return npcBot:Action_UseAbilityOnEntity(leak, enemyHero);
+        return npcBot:ActionPush_UseAbilityOnEntity(leak, enemyHero);
       end
     end
   end
 
   if npcBot:IsChanneling() or npcBot:GetCurrentActionType() == BOT_ACTION_TYPE_USE_ABILITY then
     if wave:IsChanneling() and (#enemyHeroes >= 2 or npcBot:GetActiveMode() == BOT_MODE_RETREAT) then
-      return npcBot:Action_UseAbility(wave);
+      return npcBot:ActionPush_UseAbility(wave);
     end
     return;
   end
@@ -59,21 +59,25 @@ function AbilityUsageThink()
     npcBot:GetMana() - wave:GetManaCost() > mana:GetManaCost() and
     npcBot:GetActiveMode() ~= BOT_MODE_RETREAT and
     #creeps >= 3 then
-    return npcBot:Action_UseAbilityOnLocation(wave, creeps[1]:GetLocation());
+    return npcBot:ActionPush_UseAbilityOnLocation(wave, creeps[1]:GetLocation());
   end
 
   considerManaLeak();
 
   -- if ult:IsFullyCastable() and npcBot:GetMana() - ult:GetManaCost() > waveAndManaCombo then
-  --   npcBot:Action_UseAbility(ult);
+  --   npcBot:ActionPush_UseAbility(ult);
   -- end
   if mana:IsFullyCastable() then
     local target = Helper.GetHeroWith(npcBot, 'min', 'GetMana', mana:GetCastRange(), false);
-    return npcBot:Action_UseAbilityOnEntity(mana, target);
+    return npcBot:ActionPush_UseAbilityOnEntity(mana, target);
   end
 
 end
 
 function ItemUsageThink()
   ability_item_usage_generic.ItemUsageThink();
+end
+
+function BuybackUsageThink()
+  ability_item_usage_generic.BuybackUsageThink();
 end

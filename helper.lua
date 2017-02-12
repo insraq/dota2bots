@@ -47,7 +47,7 @@ function Helper.PurchaseBootsAndTP(npcBot)
 
   local hasTravelBoots = false;
   local tpScroll = nil;
-  local phaseBoots = nil;
+  local otherBoots = nil;
 
   for i = 0, 14 do
     local item = npcBot:GetItemInSlot(i);
@@ -57,8 +57,8 @@ function Helper.PurchaseBootsAndTP(npcBot)
     if (item) and item:GetName() == "item_tpscroll" then
       tpScroll = item;
     end
-    if (item) and item:GetName() == "item_phase_boots" then
-      phaseBoots = item;
+    if (item) and (item:GetName() == "item_phase_boots" or item:GetName() == "item_arcane_boots") then
+      otherBoots = item;
     end
   end
 
@@ -66,8 +66,8 @@ function Helper.PurchaseBootsAndTP(npcBot)
     if tpScroll ~= nil then
       npcBot:ActionImmediate_SellItem(tpScroll);
     end
-    if phaseBoots ~= nil then
-      npcBot:ActionImmediate_SellItem(phaseBoots);
+    if otherBoots ~= nil then
+      npcBot:ActionImmediate_SellItem(otherBoots);
     end
   else
     Helper.PurchaseTP(npcBot);
@@ -86,27 +86,24 @@ function Helper.PurchaseItems(npcBot, buildTable)
 
   if ( npcBot:GetGold() >= GetItemCost( sNextItem ) ) then
 
-    local function PurchaseItem()
-      npcBot:ActionImmediate_PurchaseItem( sNextItem );
+    local function PurchaseItem(who)
+      who:ActionImmediate_PurchaseItem( sNextItem );
       print(npcBot:GetUnitName() .. " purchased " .. sNextItem)
       table.remove(buildTable, 1);
       npcBot:SetNextItemPurchaseValue(0);
     end
 
     if (IsItemPurchasedFromSecretShop(sNextItem)) then
-
       if npcBot:DistanceFromSecretShop() < 300 then
-        PurchaseItem();
-      else
-        local secretShop = Helper.Locations.RadiantShop;
-        if (GetTeam() == TEAM_DIRE) then
-          secretShop = Helper.Locations.DireShop;
-        end
-        -- npcBot:Action_MoveToLocation(secretShop);
+        PurchaseItem(npcBot);
+      elseif GetCourier(0):DistanceFromSecretShop() < 300 then
+        PurchaseItem(GetCourier(0));
+        npcBot:ActionImmediate_Courier(GetCourier(0), COURIER_ACTION_TRANSFER_ITEMS);
+      elseif IsCourierAvailable() then
+        npcBot:ActionImmediate_Courier(GetCourier(0), COURIER_ACTION_SECRET_SHOP);
       end
-
     else
-      PurchaseItem();
+      PurchaseItem(npcBot);
     end
   end
 end
@@ -257,9 +254,13 @@ function Helper.PushThink(npcBot, lane)
   if npcBot:IsChanneling() or npcBot:GetCurrentActionType() == BOT_ACTION_TYPE_USE_ABILITY then
     return;
   end
-  npcBot:Action_MoveToLocation(
-    GetLaneFrontLocation(GetTeam(), lane, 0) - Helper.RandomForwardVector(500)
+  npcBot:ActionPush_MoveToLocation(
+    GetLaneFrontLocation(GetTeam(), lane, 0) - Helper.RandomForwardVector(npcBot:GetAttackRange() * 0.8)
   );
+  local creeps = npcBot:GetNearbyLaneCreeps(npcBot:GetAttackRange(), true);
+  if #creeps > 0 then
+    npcBot:ActionPush_AttackUnit(creeps[1], false)
+  end
 end
 
 function Helper.GetOutermostTower(team, lane)
