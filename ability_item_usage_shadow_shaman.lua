@@ -27,7 +27,7 @@ function AbilityUsageThink()
   local shackles = npcBot:GetAbilityByName(Abilities[3]);
   local ult = npcBot:GetAbilityByName(Abilities[4]);
 
-  if npcBot:IsChanneling() or npcBot:GetCurrentActionType() == BOT_ACTION_TYPE_USE_ABILITY then
+  if npcBot:IsChanneling() or npcBot:IsUsingAbility() then
     return;
   end
 
@@ -35,6 +35,12 @@ function AbilityUsageThink()
     npcBot:GetMana() - shock:GetManaCost() > ult:GetManaCost() and
     shock:GetLevel() >= 2 then
     local target = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', shock:GetCastRange(), true);
+
+    if target == nil and
+      npcBot:GetMana() > shock:GetManaCost() + hex:GetManaCost() + shackles:GetManaCost() + ult:GetManaCost() then
+      target = npcBot:GetNearbyLaneCreeps(shock:GetCastRange(), true)[1];
+    end
+
     if target ~= nil then
       return npcBot:ActionPush_UseAbilityOnEntity(shock, target);
     end

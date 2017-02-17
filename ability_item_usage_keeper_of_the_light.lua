@@ -44,8 +44,9 @@ function AbilityUsageThink()
     end
   end
 
-  if npcBot:IsChanneling() or npcBot:GetCurrentActionType() == BOT_ACTION_TYPE_USE_ABILITY then
-    if wave:IsChanneling() and (#enemyHeroes >= 2 or npcBot:GetActiveMode() == BOT_MODE_RETREAT) then
+  if npcBot:IsChanneling() or npcBot:IsUsingAbility() then
+    if wave:IsChanneling() and
+      (npcBot:WasRecentlyDamagedByAnyHero(2.0) or npcBot:WasRecentlyDamagedByTower(2.0)) then
       return npcBot:ActionPush_UseAbility(wave);
     end
     return;

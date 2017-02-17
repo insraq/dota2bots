@@ -17,7 +17,7 @@ function ItemUsageThink()
 
   local npcBot = GetBot();
 
-  if npcBot:IsChanneling() or npcBot:GetCurrentActionType() == BOT_ACTION_TYPE_USE_ABILITY then
+  if npcBot:IsChanneling() or npcBot:IsUsingAbility() then
     return;
   end
 

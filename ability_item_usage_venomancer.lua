@@ -26,7 +26,7 @@ function AbilityUsageThink()
   local ward = npcBot:GetAbilityByName(Abilities[3]);
   local nova = npcBot:GetAbilityByName(Abilities[4]);
 
-  if npcBot:IsChanneling() or npcBot:GetCurrentActionType() == BOT_ACTION_TYPE_USE_ABILITY then
+  if npcBot:IsChanneling() or npcBot:IsUsingAbility() then
     return;
   end
 
