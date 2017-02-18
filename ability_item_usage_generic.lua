@@ -56,7 +56,9 @@ function ItemUsageThink()
         target = GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0);
       end
 
-      if target ~= nil and GetUnitToLocationDistance(npcBot, target) > 5000 then
+      if target ~= nil and
+        GetUnitToLocationDistance(npcBot, target) > 5000 and
+        Helper.IsForward(npcBot:GetLocation(), target) then
         local offset = Vector(-500, -500);
         if (GetTeam() == TEAM_DIRE) then
           offset = Vector(500, 500)

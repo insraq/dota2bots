@@ -324,6 +324,13 @@ function Helper.RandomForwardVector(length)
   return offset;
 end
 
+function Helper.IsForward(from, to)
+  if GetTeam() == TEAM_RADIANT then
+    return to.x - from.x > 0 or to.y - from.y > 0;
+  end
+  return to.x - from.x < 0 or to.y - from.y < 0;
+end
+
 function Helper.GetHeroWith(npcBot, comparison, attr, radius, enemy)
 
   local heroes = npcBot:GetNearbyHeroes(radius, enemy, BOT_MODE_NONE);

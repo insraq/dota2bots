@@ -62,7 +62,7 @@ function AbilityUsageThink()
     end
   end
 
-  if siphon:IsFullyCastable() then
+  if siphon:IsFullyCastable() and swarm:GetLevel() >= 3 then
     local target = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', siphon:GetCastRange(), true);
     if target ~= nil then
       npcBot:ActionQueue_MoveToUnit(target);

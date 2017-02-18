@@ -22,21 +22,6 @@ local tableItemsToBuy = {
 
   "item_recipe_null_talisman",
 
-  "item_belt_of_strength",
-  "item_staff_of_wizardry",
-  "item_recipe_necronomicon",
-  "item_recipe_necronomicon",
-  "item_recipe_necronomicon",
-
-  "item_ring_of_health",
-  "item_cloak",
-  "item_ring_of_regen",
-
-  "item_ring_of_regen",
-  "item_branches",
-  "item_recipe_headdress",
-  "item_recipe_pipe",
-
   "item_vitality_booster",
   "item_energy_booster",
   "item_point_booster",
@@ -45,16 +30,28 @@ local tableItemsToBuy = {
   "item_recipe_soul_ring",
   "item_recipe_bloodstone",
 
+  "item_belt_of_strength",
+  "item_staff_of_wizardry",
+  "item_recipe_necronomicon",
+  "item_recipe_necronomicon",
+  "item_recipe_necronomicon",
+
   "item_platemail",
   "item_mystic_staff",
   "item_recipe_shivas_guard",
+
+  "item_vitality_booster",
+  "item_reaver",
+  "item_recipe_heart",
 
   "item_boots",
   "item_recipe_travel_boots",
 
   "item_vitality_booster",
-  "item_reaver",
-  "item_recipe_heart"
+  "item_energy_booster",
+  "item_point_booster",
+  "item_mystic_staff",
+
 };
 
 local abilities = {
