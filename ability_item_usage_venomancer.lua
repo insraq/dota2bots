@@ -43,6 +43,7 @@ function AbilityUsageThink()
     (#npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE) > 0 or
       #npcBot:GetNearbyTowers(1500, true) > 0 or
       #npcBot:GetNearbyBarracks(1500, true) > 0 or
+      #npcBot:GetNearbyLaneCreeps(1500, true) > 2 or
       npcBot:GetManaRegen() > 4 or
       npcBot:GetActiveMode() == BOT_MODE_ATTACK or
       npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT or

@@ -31,10 +31,14 @@ function AbilityUsageThink()
     return;
   end
 
-  local battleMayHappen = #npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE) >= 3;
+  local battleMayHappen = #npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE) >= 3 or
+    (
+      #npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE) >= 2 and
+      #npcBot:GetNearbyHeroes(1500, false, BOT_MODE_NONE) >= 2
+    );
   local isPushing = (
     #npcBot:GetNearbyTowers(700, true) > 0 or #npcBot:GetNearbyBarracks(700, true) > 0
-  ) and #npcBot:GetNearbyHeroes(700, false, BOT_MODE_NONE) >= 2
+  ) and #npcBot:GetNearbyHeroes(700, false, BOT_MODE_NONE) >= 2;
 
   if ult:IsFullyCastable() and (battleMayHappen or isPushing) then
     return npcBot:ActionPush_UseAbility(ult);
