@@ -31,6 +31,27 @@ function AbilityUsageThink()
     return;
   end
 
+  local ultTarget = nil;
+
+  local enemyHeroes = npcBot:GetNearbyHeroes(ult:GetCastRange(), true, BOT_MODE_NONE);
+  if #enemyHeroes >= 2 then
+    ultTarget = enemyHeroes[1]:GetLocation();
+  end
+
+  local towers = npcBot:GetNearbyTowers(ult:GetCastRange(), true);
+  if #towers > 0 then
+    ultTarget = towers[1]:GetLocation();
+  end
+
+  local barracks = npcBot:GetNearbyBarracks(ult:GetCastRange(), true);
+  if #barracks > 0 then
+    ultTarget = barracks[1]:GetLocation();
+  end
+
+  if ultTarget ~= nil and ult:IsFullyCastable() then
+    return npcBot:ActionPush_UseAbilityOnLocation(ult, ultTarget);
+  end
+
   if shock:IsFullyCastable() and
     npcBot:GetMana() - shock:GetManaCost() > ult:GetManaCost() and
     shock:GetLevel() >= 2 then
@@ -61,27 +82,6 @@ function AbilityUsageThink()
     if target ~= nil then
       return npcBot:ActionPush_UseAbilityOnEntity(shackles, target);
     end
-  end
-
-  local target = nil;
-
-  local enemyHeroes = npcBot:GetNearbyHeroes(ult:GetCastRange(), true, BOT_MODE_NONE);
-  if #enemyHeroes >= 2 then
-    target = enemyHeroes[1]:GetLocation();
-  end
-
-  local towers = npcBot:GetNearbyTowers(ult:GetCastRange(), true);
-  if #towers > 0 then
-    target = towers[1]:GetLocation();
-  end
-
-  local barracks = npcBot:GetNearbyBarracks(ult:GetCastRange(), true);
-  if #barracks > 0 then
-    target = barracks[1]:GetLocation();
-  end
-
-  if target ~= nil and ult:IsFullyCastable() then
-    return npcBot:ActionPush_UseAbilityOnLocation(ult, target);
   end
 
 end

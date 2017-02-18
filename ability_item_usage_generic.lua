@@ -124,9 +124,9 @@ function BuybackUsageThink()
   if npcBot:IsAlive() or (not npcBot:HasBuyback()) then
     return;
   end
-  if GetLaneFrontAmount(GetTeam(), LANE_TOP, false) < 0.1 or
-    GetLaneFrontAmount(GetTeam(), LANE_MID, false) < 0.1 or
-    GetLaneFrontAmount(GetTeam(), LANE_BOT, false) < 0.1 then
+  if GetLaneFrontAmount(GetTeam(), LANE_TOP, false) < 0.2 or
+    GetLaneFrontAmount(GetTeam(), LANE_MID, false) < 0.2 or
+    GetLaneFrontAmount(GetTeam(), LANE_BOT, false) < 0.2 then
     npcBot:ActionImmediate_Buyback();
   end
 end

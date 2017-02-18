@@ -4,6 +4,11 @@ The aim of this bot is for extreme [pushing](http://dota2.gamepedia.com/Pushing)
 
 **You might have to unsubscribe and resubscribe to update your bot scripts to the latest version.**
 
+### v.20170218
+
+- Added Shadow Shaman
+- Added Death Prophet
+
 ### v.20170211
 
 - Fix broken bots caused by recent game updates.
