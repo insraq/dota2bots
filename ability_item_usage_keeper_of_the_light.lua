@@ -46,8 +46,11 @@ function AbilityUsageThink()
 
   if npcBot:IsChanneling() or npcBot:IsUsingAbility() then
     if wave:IsChanneling() and
-      (npcBot:WasRecentlyDamagedByAnyHero(2.0) or npcBot:WasRecentlyDamagedByTower(2.0) or #enemyHeroes >= 2) then
-      return npcBot:ActionPush_UseAbility(wave);
+      (npcBot:WasRecentlyDamagedByAnyHero(2.0) or
+        npcBot:WasRecentlyDamagedByTower(2.0) or
+        npcBot:WasRecentlyDamagedByCreep(2.0) or
+        #enemyHeroes >= 2) then
+      return npcBot:ActionPush_UseAbility(npcBot:GetAbilityInSlot(0));
     end
     return;
   end
