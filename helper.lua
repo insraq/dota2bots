@@ -197,28 +197,28 @@ end
 
 function Helper.SeparatePushLane(npcBot)
 
-  local team = TEAM_RADIANT;
-  if GetTeam() == TEAM_RADIANT then
-    team = TEAM_DIRE;
-  end
+  -- local team = TEAM_RADIANT;
+  -- if GetTeam() == TEAM_RADIANT then
+  --   team = TEAM_DIRE;
+  -- end
 
-  if npcBot:GetAssignedLane() == LANE_MID and
-    (GetTower(team, TOWER_MID_1) ~= nil or
-    GetTower(team, TOWER_MID_2) ~= nil) then
-    return LANE_MID;
-  end
+  -- if npcBot:GetAssignedLane() == LANE_MID and
+  --   (GetTower(team, TOWER_MID_1) ~= nil or
+  --   GetTower(team, TOWER_MID_2) ~= nil) then
+  --   return LANE_MID;
+  -- end
 
-  if npcBot:GetAssignedLane() == LANE_BOT and
-    (GetTower(team, TOWER_BOT_1) ~= nil or
-    GetTower(team, TOWER_BOT_2) ~= nil) then
-    return LANE_BOT;
-  end
+  -- if npcBot:GetAssignedLane() == LANE_BOT and
+  --   (GetTower(team, TOWER_BOT_1) ~= nil or
+  --   GetTower(team, TOWER_BOT_2) ~= nil) then
+  --   return LANE_BOT;
+  -- end
 
-  if npcBot:GetAssignedLane() == LANE_TOP and
-    (GetTower(team, TOWER_TOP_1) ~= nil or
-    GetTower(team, TOWER_TOP_2) ~= nil) then
-    return LANE_TOP;
-  end
+  -- if npcBot:GetAssignedLane() == LANE_TOP and
+  --   (GetTower(team, TOWER_TOP_1) ~= nil or
+  --   GetTower(team, TOWER_TOP_2) ~= nil) then
+  --   return LANE_TOP;
+  -- end
 
   return Helper.TeamPushLane();
 

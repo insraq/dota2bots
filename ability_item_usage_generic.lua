@@ -67,7 +67,12 @@ function ItemUsageThink()
       end
     end
 
-    if (item) and (item:GetName() == "item_mekansm" or item:GetName() == "item_pipe") and item:IsFullyCastable() and teammates ~= nil and #teammates >=2 then
+    if (item) and (
+        item:GetName() == "item_mekansm" or
+        item:GetName() == "item_pipe" or
+        item:GetName() == "item_guardian_greaves" or
+        item:GetName() == "item_crimson_guard"
+      ) and item:IsFullyCastable() and teammates ~= nil and #teammates >=2 then
       if npcBot:GetHealth() <= 400 then
         npcBot:ActionPush_UseAbility(item);
       end
@@ -103,6 +108,32 @@ function ItemUsageThink()
       local weakestEnemy = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', item:GetCastRange(), true);
       if (weakestEnemy ~= nil) then
         npcBot:ActionPush_UseAbilityOnEntity(item, weakestEnemy);
+      end
+    end
+
+    if (item) and
+      item:GetName() == "item_sheepstick" and
+      item:IsFullyCastable() then
+      local target = Helper.GetHeroWith(npcBot, 'max', 'GetAttackDamage', item:GetCastRange(), true);
+      if target ~= nil then
+        return npcBot:ActionPush_UseAbilityOnEntity(item, target);
+      end
+    end
+
+    if (item) and
+      item:GetName() == "item_blade_mail" and
+      npcBot:WasRecentlyDamagedByAnyHero(2.0) and
+      item:IsFullyCastable() then
+      return npcBot:ActionPush_UseAbility(item);
+    end
+
+    if (item) and
+      npcBot:GetHealth() < npcBot:GetMaxHealth() - 200 and
+      (not npcBot:HasModifier("modifier_tango_heal")) and
+      item:GetName() == "item_tango" then
+      local trees = npcBot:GetNearbyTrees(300);
+      if (#trees > 0) then
+        npcBot:Action_UseAbilityOnTree(item, trees[1]);
       end
     end
 

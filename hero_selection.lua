@@ -1,11 +1,11 @@
 ----------------------------------------------------------------------------------------------------
 
 local MyBots = {
-  "npc_dota_hero_shadow_shaman",
+  "npc_dota_hero_undying",
   "npc_dota_hero_keeper_of_the_light",
-  "npc_dota_hero_venomancer",
   "npc_dota_hero_death_prophet",
-  "npc_dota_hero_keeper_of_the_light"
+  "npc_dota_hero_venomancer",
+  "npc_dota_hero_shadow_shaman"
 };
 
 function Think()

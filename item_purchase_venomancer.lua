@@ -15,6 +15,7 @@ local tableItemsToBuy = {
   "item_flask",
   "item_ring_of_protection",
   "item_sobi_mask",
+  "item_tango",
 
   "item_boots",
   "item_blades_of_attack",

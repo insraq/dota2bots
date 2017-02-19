@@ -45,14 +45,12 @@ function AbilityUsageThink()
   end
 
   if npcBot:IsChanneling() or npcBot:IsUsingAbility() then
-    if wave:IsChanneling() and
-      (npcBot:WasRecentlyDamagedByAnyHero(2.0) or
-        npcBot:WasRecentlyDamagedByTower(2.0) or
-        npcBot:WasRecentlyDamagedByCreep(2.0) or
-        #enemyHeroes >= 2) then
-      return npcBot:ActionPush_UseAbility(npcBot:GetAbilityInSlot(0));
-    end
     return;
+  end
+
+  if mana:IsFullyCastable() then
+    local target = Helper.GetHeroWith(npcBot, 'min', 'GetMana', mana:GetCastRange(), false);
+    return npcBot:ActionPush_UseAbilityOnEntity(mana, target);
   end
 
   if #enemyHeroes >= 2 or npcBot:GetActiveMode() == BOT_MODE_RETREAT then
@@ -71,11 +69,6 @@ function AbilityUsageThink()
   -- if ult:IsFullyCastable() and npcBot:GetMana() - ult:GetManaCost() > waveAndManaCombo then
   --   npcBot:ActionPush_UseAbility(ult);
   -- end
-  if mana:IsFullyCastable() then
-    local target = Helper.GetHeroWith(npcBot, 'min', 'GetMana', mana:GetCastRange(), false);
-    return npcBot:ActionPush_UseAbilityOnEntity(mana, target);
-  end
-
 end
 
 function ItemUsageThink()

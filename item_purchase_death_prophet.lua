@@ -14,6 +14,7 @@ local tableItemsToBuy = {
 
   "item_flask",
   "item_circlet",
+  "item_tango",
   "item_mantle",
 
   "item_boots",
