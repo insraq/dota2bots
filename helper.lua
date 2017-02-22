@@ -226,27 +226,49 @@ end
 
 function Helper.GetPushDesire(npcBot, lane)
 
-   for i = 0,5 do
-    local item = npcBot:GetItemInSlot(i);
-    if (item) and (string.find(item:GetName(), "item_necronomicon") or item:GetName() == "item_mekansm") then
-      if Helper.SeparatePushLane(npcBot) == lane then
-        local enemyHeroes = npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE);
-        if enemyHeroes ~= nil and #enemyHeroes > 0 then
-          return 0.1;
-        end
-        if npcBot:GetHealth() < 500 then
-          return 0.25;
-        end
-        if GetLaneFrontAmount(GetTeam(), LANE_TOP, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_MID, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_BOT, false) < 0.3 then
-          return 0.25;
-        end
-        if GetUnitToLocationDistance(npcBot, GetLaneFrontLocation(GetTeam(), lane, 0.0)) < 500 then
-          return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.5);
-        end
-        return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.9);
-      end
+  if DotaTime() < 60 * 10 then
+    return 0.1;
+  end
+
+  local radiantAlive = 0;
+  local direAlive = 0;
+
+  local IDs = GetTeamPlayers(TEAM_RADIANT);
+  for _,id in pairs(IDs) do
+    if IsHeroAlive(id) then
+      radiantAlive = radiantAlive + 1;
     end
   end
+
+  IDs = GetTeamPlayers(TEAM_DIRE);
+  for _,id in pairs(IDs) do
+    if IsHeroAlive(id) then
+      direAlive = direAlive + 1;
+    end
+  end
+
+  if (GetTeam() == TEAM_RADIANT and radiantAlive < direAlive) or
+    (GetTeam() == TEAM_DIRE and direAlive < radiantAlive) then
+    return 0.25;
+  end
+
+  if Helper.SeparatePushLane(npcBot) == lane then
+    local enemyHeroes = npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE);
+    if enemyHeroes ~= nil and #enemyHeroes > 0 then
+      return 0.1;
+    end
+    if npcBot:GetHealth() < 500 then
+      return 0.25;
+    end
+    if GetLaneFrontAmount(GetTeam(), LANE_TOP, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_MID, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_BOT, false) < 0.3 then
+      return 0.25;
+    end
+    if GetUnitToLocationDistance(npcBot, GetLaneFrontLocation(GetTeam(), lane, 0.0)) < 500 then
+      return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.5);
+    end
+    return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.9);
+  end
+
   return 0.1;
 end
 
@@ -254,6 +276,7 @@ function Helper.PushThink(npcBot, lane)
   if npcBot:IsChanneling() or npcBot:IsUsingAbility() then
     return;
   end
+
   npcBot:ActionPush_MoveToLocation(
     GetLaneFrontLocation(GetTeam(), lane, 0) - Helper.RandomForwardVector(npcBot:GetAttackRange() * 0.8)
   );

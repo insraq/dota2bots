@@ -13,7 +13,7 @@ local Helper = require(GetScriptDirectory() .. "/helper");
 local tableItemsToBuy = {
 
   "item_courier",
-  "item_flask",
+  "item_tango",
   "item_tango",
 
   "item_boots",
@@ -41,11 +41,9 @@ local tableItemsToBuy = {
   "item_recipe_headdress",
   "item_recipe_pipe",
 
-  "item_ring_of_health",
   "item_void_stone",
-  "item_ring_of_health",
-  "item_void_stone",
-  "item_recipe_refresher",
+  "item_ultimate_orb",
+  "item_mystic_staff",
 
   "item_boots",
   "item_recipe_travel_boots",
