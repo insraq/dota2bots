@@ -41,12 +41,12 @@ local tableItemsToBuy = {
   "item_recipe_headdress",
   "item_recipe_pipe",
 
+  "item_boots",
+  "item_recipe_travel_boots",
+
   "item_void_stone",
   "item_ultimate_orb",
   "item_mystic_staff",
-
-  "item_boots",
-  "item_recipe_travel_boots",
 };
 
 local abilities = {

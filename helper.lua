@@ -77,26 +77,22 @@ end
 
 function Helper.PurchaseItems(npcBot, buildTable)
   if ( #buildTable == 0 ) then
-    npcBot:SetNextItemPurchaseValue( 0 );
+    npcBot:SetNextItemPurchaseValue(0);
     return;
   end
 
   local sNextItem = buildTable[1];
-  npcBot:SetNextItemPurchaseValue( GetItemCost( sNextItem ) );
+  npcBot:SetNextItemPurchaseValue(GetItemCost(sNextItem));
 
-  if ( npcBot:GetGold() >= GetItemCost( sNextItem ) ) then
+  local function PurchaseItem(who)
+    who:ActionImmediate_PurchaseItem( sNextItem );
+    print(npcBot:GetUnitName() .. " purchased " .. sNextItem)
+    table.remove(buildTable, 1);
+  end
 
-    local function PurchaseItem(who)
-      who:ActionImmediate_PurchaseItem( sNextItem );
-      print(npcBot:GetUnitName() .. " purchased " .. sNextItem)
-      table.remove(buildTable, 1);
-      npcBot:SetNextItemPurchaseValue(0);
-    end
-
+  if (npcBot:GetGold() >= GetItemCost(sNextItem)) then
     if (IsItemPurchasedFromSecretShop(sNextItem)) then
-      if npcBot:DistanceFromSecretShop() < 300 then
-        PurchaseItem(npcBot);
-      elseif GetCourier(0):DistanceFromSecretShop() < 300 then
+      if GetCourier(0):DistanceFromSecretShop() < 300 then
         PurchaseItem(GetCourier(0));
         npcBot:ActionImmediate_Courier(GetCourier(0), COURIER_ACTION_TRANSFER_ITEMS);
       elseif IsCourierAvailable() then
@@ -224,12 +220,7 @@ function Helper.SeparatePushLane(npcBot)
 
 end
 
-function Helper.GetPushDesire(npcBot, lane)
-
-  if DotaTime() < 60 * 10 then
-    return 0.1;
-  end
-
+function Helper.TeamAlive()
   local radiantAlive = 0;
   local direAlive = 0;
 
@@ -247,9 +238,25 @@ function Helper.GetPushDesire(npcBot, lane)
     end
   end
 
-  if (GetTeam() == TEAM_RADIANT and radiantAlive < direAlive) or
-    (GetTeam() == TEAM_DIRE and direAlive < radiantAlive) then
-    return 0.25;
+  if GetTeam() == TEAM_RADIANT then
+    return radiantAlive, direAlive;
+  end
+
+  return direAlive, radiantAlive;
+
+end
+
+function Helper.GetPushDesire(npcBot, lane)
+
+  if DotaTime() < 60 * 10 then
+    return 0.1;
+  end
+
+  local team, enemyTeam = Helper.TeamAlive();
+  local base = 1.0;
+
+  if team < enemyTeam then
+    base = 0.5;
   end
 
   if Helper.SeparatePushLane(npcBot) == lane then
@@ -257,28 +264,33 @@ function Helper.GetPushDesire(npcBot, lane)
     if enemyHeroes ~= nil and #enemyHeroes > 0 then
       return 0.1;
     end
-    if npcBot:GetHealth() < 500 then
-      return 0.25;
-    end
-    if GetLaneFrontAmount(GetTeam(), LANE_TOP, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_MID, false) < 0.3 or GetLaneFrontAmount(GetTeam(), LANE_BOT, false) < 0.3 then
+    if npcBot:GetHealth() < 400 then
       return 0.25;
     end
     if GetUnitToLocationDistance(npcBot, GetLaneFrontLocation(GetTeam(), lane, 0.0)) < 500 then
-      return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.5);
+      return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.5 * base);
     end
-    return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.9);
+    return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.9 * base);
   end
 
   return 0.1;
 end
 
 function Helper.PushThink(npcBot, lane)
+
   if npcBot:IsChanneling() or npcBot:IsUsingAbility() then
     return;
   end
 
+  local team, enemy = Helper.TeamAlive();
+  local offset = 0;
+
+  if #npcBot:GetNearbyHeroes(1500, false, BOT_MODE_NONE) < team and #npcBot:GetNearbyHeroes(1500, false, BOT_MODE_NONE) < enemy then
+    offset = -1000;
+  end
+
   npcBot:ActionPush_MoveToLocation(
-    GetLaneFrontLocation(GetTeam(), lane, 0) - Helper.RandomForwardVector(npcBot:GetAttackRange() * 0.8)
+    GetLaneFrontLocation(GetTeam(), lane, offset) - Helper.RandomForwardVector(npcBot:GetAttackRange() * 0.8)
   );
   local creeps = npcBot:GetNearbyLaneCreeps(npcBot:GetAttackRange(), true);
   if #creeps > 0 then

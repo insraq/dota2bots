@@ -41,6 +41,9 @@ local tableItemsToBuy = {
   "item_mystic_staff",
   "item_recipe_shivas_guard",
 
+  "item_boots",
+  "item_recipe_travel_boots",
+
   "item_vitality_booster",
   "item_reaver",
   "item_recipe_heart",
@@ -50,8 +53,7 @@ local tableItemsToBuy = {
   "item_point_booster",
   "item_mystic_staff",
 
-  "item_boots",
-  "item_recipe_travel_boots",
+
 };
 
 local abilities = {
