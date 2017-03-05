@@ -69,7 +69,7 @@ function AbilityUsageThink()
 
   if hex:IsFullyCastable() and
     npcBot:GetMana() - hex:GetManaCost() > ult:GetManaCost() + shock:GetManaCost() then
-    local target = Helper.GetHeroWith(npcBot, 'max', 'GetAttackDamage', hex:GetCastRange(), true);
+    local target = Helper.GetHeroWith(npcBot, 'max', 'GetRawOffensivePower', hex:GetCastRange(), true);
     if target ~= nil then
       return npcBot:ActionPush_UseAbilityOnEntity(hex, target);
     end

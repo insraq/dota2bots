@@ -13,9 +13,22 @@ end
 
 local Helper = require(GetScriptDirectory() .. "/helper");
 
+local function considerGlyph(tower)
+  if tower:GetHealth() < tower:GetMaxHealth() * 0.5 and
+    tower:TimeSinceDamagedByAnyHero() < 4 and tower:TimeSinceDamagedByAnyHero() > 1 and
+    tower:TimeSinceDamagedByCreep() < 4 and tower:TimeSinceDamagedByCreep() > 1 and
+    GetGlyphCooldown() == 0 then
+      GetBot():ActionImmediate_Glyph();
+  end
+end
+
 function ItemUsageThink()
 
   local npcBot = GetBot();
+
+  considerGlyph(Helper.GetOutermostTower(GetTeam(), LANE_TOP));
+  considerGlyph(Helper.GetOutermostTower(GetTeam(), LANE_MID));
+  considerGlyph(Helper.GetOutermostTower(GetTeam(), LANE_BOT));
 
   if npcBot:IsChanneling() or npcBot:IsUsingAbility() then
     return;
@@ -27,11 +40,11 @@ function ItemUsageThink()
   for i = 0,5 do
     local item = npcBot:GetItemInSlot(i);
 
-    if (item) and string.find(item:GetName(), "item_necronomicon") and item:IsFullyCastable() and enemies ~= nil and #enemies >= 1 then
+    if (item) and string.find(item:GetName(), "item_necronomicon") and item:IsFullyCastable() and #enemies >= 1 then
       npcBot:ActionPush_UseAbility(item);
     end
 
-    if (item) and string.find(item:GetName(), "item_dagon") and item:IsFullyCastable() and enemies ~= nil and #enemies >= 1 then
+    if (item) and string.find(item:GetName(), "item_dagon") and item:IsFullyCastable() and #enemies >= 1 then
       local weakestEnemy = Helper.GetHeroWith(npcBot, 'min', 'GetHealth', item:GetCastRange(), true);
       if (weakestEnemy ~= nil) then
         npcBot:ActionPush_UseAbilityOnEntity(item, weakestEnemy);
@@ -42,21 +55,23 @@ function ItemUsageThink()
 
       local target = nil;
 
+      local enemy = Helper.GetEnemyLastSeenInfo(5.0);
+
       if npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT then
         target = Helper.GetOutermostTower(GetTeam(), LANE_BOT):GetLocation();
       elseif npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_MID then
         target = Helper.GetOutermostTower(GetTeam(), LANE_MID):GetLocation();
       elseif npcBot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_TOP then
         target = Helper.GetOutermostTower(GetTeam(), LANE_TOP):GetLocation();
-      elseif npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT and item:GetName() == "item_travel_boots" then
+      elseif npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT and item:GetName() == "item_travel_boots" and #enemy[LANE_BOT] < 3 then
         target = GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0);
-      elseif npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID and item:GetName() == "item_travel_boots" then
+      elseif npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID and item:GetName() == "item_travel_boots" and #enemy[LANE_MID] < 3 then
         target = GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0);
-      elseif npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP and item:GetName() == "item_travel_boots" then
+      elseif npcBot:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP and item:GetName() == "item_travel_boots" and #enemy[LANE_TOP] < 3 then
         target = GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0);
       end
 
-      if target ~= nil and
+      if target ~= nil and #teammates < 2 and
         GetUnitToLocationDistance(npcBot, target) > 5000 and
         Helper.IsForward(npcBot:GetLocation(), target) then
         local offset = Vector(-500, -500);
@@ -65,6 +80,7 @@ function ItemUsageThink()
         end
         npcBot:ActionPush_UseAbilityOnLocation(item, target + offset);
       end
+
     end
 
     if (item) and (
@@ -91,7 +107,7 @@ function ItemUsageThink()
       npcBot:ActionPush_UseAbility(item);
     end
 
-    if (item) and item:GetName() == "item_shivas_guard" and item:IsFullyCastable() and enemies ~= nil and #enemies >= 2 then
+    if (item) and item:GetName() == "item_shivas_guard" and item:IsFullyCastable() and #enemies >= 2 then
       npcBot:ActionPush_UseAbility(item);
     end
 
@@ -114,9 +130,9 @@ function ItemUsageThink()
     if (item) and
       item:GetName() == "item_sheepstick" and
       item:IsFullyCastable() then
-      local target = Helper.GetHeroWith(npcBot, 'max', 'GetAttackDamage', item:GetCastRange(), true);
+      local target = Helper.GetHeroWith(npcBot, 'max', 'GetRawOffensivePower', item:GetCastRange(), true);
       if target ~= nil then
-        return npcBot:ActionPush_UseAbilityOnEntity(item, target);
+        npcBot:ActionPush_UseAbilityOnEntity(item, target);
       end
     end
 
@@ -124,7 +140,7 @@ function ItemUsageThink()
       item:GetName() == "item_blade_mail" and
       npcBot:WasRecentlyDamagedByAnyHero(2.0) and
       item:IsFullyCastable() then
-      return npcBot:ActionPush_UseAbility(item);
+      npcBot:ActionPush_UseAbility(item);
     end
 
     if (item) and

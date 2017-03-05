@@ -129,6 +129,15 @@ function Helper.HasValueChanged(key, value, callback)
   cache[key] = value;
 end
 
+local last = "";
+function Helper.ChatIfChanged(text)
+  if (last == text) then
+    return;
+  end
+  last = text;
+  GetBot():ActionImmediate_Chat(text, true);
+end
+
 local botId = nil;
 
 function Helper.GetFirstBot()
@@ -142,6 +151,32 @@ function Helper.GetFirstBot()
     end
   end
   return GetTeamMember(botId);
+end
+
+function Helper.GetEnemyLastSeenInfo(maxTime)
+  local IDs = GetTeamPlayers(GetOpposingTeam());
+  local result = {
+    [LANE_TOP] = {},
+    [LANE_MID] = {},
+    [LANE_BOT] = {},
+  };
+  for _,id in pairs(IDs) do
+    local info = GetHeroLastSeenInfo(id);
+    if IsHeroAlive(id) and info.time <= maxTime then
+      local lane = LANE_TOP;
+      if GetAmountAlongLane(LANE_MID, info.location).distance < GetAmountAlongLane(lane, info.location).distance then
+        lane = LANE_MID;
+      end
+      if GetAmountAlongLane(LANE_BOT, info.location).distance < GetAmountAlongLane(lane, info.location).distance then
+        lane = LANE_BOT;
+      end
+      local laneInfo = GetAmountAlongLane(lane, info.location);
+      info.laneFrontDistance = laneInfo.distance;
+      info.laneFrontAmount = laneInfo.amount;
+      table.insert(result[lane], info);
+    end
+  end
+  return result;
 end
 
 function Helper.TeamPushLane()
@@ -252,25 +287,25 @@ function Helper.GetPushDesire(npcBot, lane)
     return 0.1;
   end
 
-  local team, enemyTeam = Helper.TeamAlive();
-  local base = 1.0;
-
-  if team < enemyTeam then
-    base = 0.5;
-  end
-
   if Helper.SeparatePushLane(npcBot) == lane then
-    local enemyHeroes = npcBot:GetNearbyHeroes(1500, true, BOT_MODE_NONE);
-    if enemyHeroes ~= nil and #enemyHeroes > 0 then
+
+    if #npcBot:GetNearbyHeroes(900, true, BOT_MODE_NONE) > 0 then
       return 0.1;
     end
-    if npcBot:GetHealth() < 400 then
+
+    if npcBot:GetHealth() < 400 or
+      GetLaneFrontAmount(GetTeam(), LANE_TOP, false) < 0.2 or
+      GetLaneFrontAmount(GetTeam(), LANE_MID, false) < 0.2 or
+      GetLaneFrontAmount(GetTeam(), LANE_BOT, false) < 0.2 then
       return 0.25;
     end
-    if GetUnitToLocationDistance(npcBot, GetLaneFrontLocation(GetTeam(), lane, 0.0)) < 500 then
-      return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.5 * base);
-    end
-    return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.25, 0.25, 0.9 * base);
+
+    local max = math.max(GetDefendLaneDesire(LANE_TOP), 0.7)
+    max = math.max(GetDefendLaneDesire(LANE_MID), max)
+    max = math.max(GetDefendLaneDesire(LANE_BOT), max)
+
+    return Clamp(GetLaneFrontAmount(GetTeam(), lane, false), 0.25, max - 0.01);
+
   end
 
   return 0.1;
@@ -282,11 +317,32 @@ function Helper.PushThink(npcBot, lane)
     return;
   end
 
-  local team, enemy = Helper.TeamAlive();
-  local offset = 0;
+  local offset = -1600;
+  local team, enemyTeam = Helper.TeamAlive();
 
-  if #npcBot:GetNearbyHeroes(1500, false, BOT_MODE_NONE) < team and #npcBot:GetNearbyHeroes(1500, false, BOT_MODE_NONE) < enemy then
-    offset = -1000;
+  if (lane == LANE_TOP) then
+    otherLanes = {LANE_MID, LANE_BOT};
+  end
+  if (lane == LANE_MID) then
+    otherLanes = {LANE_TOP, LANE_BOT};
+  end
+  if (lane == LANE_BOT) then
+    otherLanes = {LANE_MID, LANE_TOP};
+  end
+
+  local enemy = Helper.GetEnemyLastSeenInfo(5.0);
+
+  if Helper.WeAreStronger(npcBot, 1600) and 
+    #npcBot:GetNearbyHeroes(1600, false, BOT_MODE_NONE) >= #enemy[lane] and
+    #npcBot:GetNearbyHeroes(1600, false, BOT_MODE_NONE) >= enemyTeam - #enemy[otherLanes[1]] - #enemy[otherLanes[2]] then
+    -- Helper.ChatIfChanged("Stronger, moving to lane front");
+    offset = 0;
+  elseif Helper.WeAreStronger(npcBot, 1600) and
+    #npcBot:GetNearbyHeroes(1600, false, BOT_MODE_NONE) >= #enemy[lane] then
+    -- Helper.ChatIfChanged("Might be stronger, moving behind the lane front");
+    offset = -500;
+  else
+    -- Helper.ChatIfChanged("Weaker, wait for teammates");
   end
 
   npcBot:ActionPush_MoveToLocation(
@@ -296,6 +352,26 @@ function Helper.PushThink(npcBot, lane)
   if #creeps > 0 then
     npcBot:ActionPush_AttackUnit(creeps[1], false)
   end
+end
+
+function Helper.WeAreStronger(npcBot, radius)
+
+  local mates = npcBot:GetNearbyHeroes(radius, false, BOT_MODE_NONE);
+  local enemies = npcBot:GetNearbyHeroes(radius, true, BOT_MODE_NONE);
+
+  local ourPower = 0;
+  local enemyPower = 0;
+
+  for _, h in pairs(mates) do
+    ourPower = ourPower + h:GetOffensivePower();
+  end
+
+  for _, h in pairs(enemies) do
+    enemyPower = enemyPower + h:GetRawOffensivePower();
+  end
+
+  return #mates > #enemies and ourPower > enemyPower;
+
 end
 
 function Helper.GetOutermostTower(team, lane)
