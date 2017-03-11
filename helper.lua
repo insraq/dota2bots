@@ -226,30 +226,50 @@ function Helper.TeamPushLane()
 
 end
 
-function Helper.SeparatePushLane(npcBot)
+local TeamLocation = {};
 
-  -- local team = TEAM_RADIANT;
-  -- if GetTeam() == TEAM_RADIANT then
-  --   team = TEAM_DIRE;
-  -- end
+function Helper.WhichLaneToPush(npcBot)
 
-  -- if npcBot:GetAssignedLane() == LANE_MID and
-  --   (GetTower(team, TOWER_MID_1) ~= nil or
-  --   GetTower(team, TOWER_MID_2) ~= nil) then
-  --   return LANE_MID;
-  -- end
+  TeamLocation[npcBot:GetPlayerID()] = npcBot:GetLocation();
 
-  -- if npcBot:GetAssignedLane() == LANE_BOT and
-  --   (GetTower(team, TOWER_BOT_1) ~= nil or
-  --   GetTower(team, TOWER_BOT_2) ~= nil) then
-  --   return LANE_BOT;
-  -- end
+  local distanceToTop = 0;
+  local distanceToMid = 0;
+  local distanceToBot = 0;
 
-  -- if npcBot:GetAssignedLane() == LANE_TOP and
-  --   (GetTower(team, TOWER_TOP_1) ~= nil or
-  --   GetTower(team, TOWER_TOP_2) ~= nil) then
-  --   return LANE_TOP;
-  -- end
+  local IDs = GetTeamPlayers(GetTeam());
+
+  for _,id in pairs(IDs) do
+    if TeamLocation[id] ~= nil then
+      if IsHeroAlive(id) then
+        distanceToTop = distanceToTop + #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - TeamLocation[id]);
+        distanceToMid = distanceToMid + #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - TeamLocation[id]);
+        distanceToBot = distanceToBot + #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - TeamLocation[id]);
+      end
+    else
+      return Helper.TeamPushLane();
+    end
+  end
+
+  if distanceToBot < distanceToTop and
+    distanceToBot < distanceToMid and
+    (GetBarracks(GetOpposingTeam(), BARRACKS_BOT_MELEE) ~= nil or GetBarracks(GetOpposingTeam(), BARRACKS_BOT_RANGED) ~= nil) then
+    Helper.ChatIfChanged("Pushing Bot");
+    return LANE_BOT;
+  end
+
+  if distanceToTop < distanceToMid and
+    distanceToTop < distanceToBot and
+    (GetBarracks(GetOpposingTeam(), BARRACKS_TOP_MELEE) ~= nil or GetBarracks(GetOpposingTeam(), BARRACKS_TOP_RANGED) ~= nil) then
+    Helper.ChatIfChanged("Pushing Top");
+    return LANE_TOP;
+  end
+
+  if distanceToMid < distanceToTop and
+    distanceToMid < distanceToBot and
+    (GetBarracks(GetOpposingTeam(), BARRACKS_MID_MELEE) ~= nil or GetBarracks(GetOpposingTeam(), BARRACKS_MID_RANGED) ~= nil) then
+    Helper.ChatIfChanged("Pushing Mid");
+    return LANE_MID;
+  end
 
   return Helper.TeamPushLane();
 
@@ -287,7 +307,7 @@ function Helper.GetPushDesire(npcBot, lane)
     return 0.1;
   end
 
-  if Helper.SeparatePushLane(npcBot) == lane then
+  if Helper.WhichLaneToPush(npcBot) == lane then
 
     if #npcBot:GetNearbyHeroes(900, true, BOT_MODE_NONE) > 0 then
       return 0.1;
@@ -300,11 +320,12 @@ function Helper.GetPushDesire(npcBot, lane)
       return 0.25;
     end
 
-    local max = math.max(GetDefendLaneDesire(LANE_TOP), 0.7)
-    max = math.max(GetDefendLaneDesire(LANE_MID), max)
-    max = math.max(GetDefendLaneDesire(LANE_BOT), max)
+    local max = 0.95;
+    if GetDefendLaneDesire(LANE_TOP) > 0.75 or GetDefendLaneDesire(LANE_MID) > 0.75 or GetDefendLaneDesire(LANE_BOT) > 0.75 then
+      max = 0.75;
+    end
 
-    return Clamp(GetLaneFrontAmount(GetTeam(), lane, false), 0.25, max - 0.01);
+    return Clamp(GetLaneFrontAmount(GetTeam(), lane, false) + 0.1, 0.25, max);
 
   end
 

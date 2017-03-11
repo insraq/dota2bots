@@ -53,7 +53,12 @@ function AbilityUsageThink()
     ) and
     npcBot:GetMana() - ward:GetManaCost() > nova:GetManaCost() and
     ward:GetLevel() >= 2 then
-    return npcBot:ActionPush_UseAbilityOnLocation(ward, npcBot:GetLocation() + Helper.RandomForwardVector(ward:GetCastRange()));
+    local target = npcBot:GetNearbyHeroes(ward:GetCastRange(), true, BOT_MODE_NONE)[1];
+    if target ~= nil then
+      return npcBot:ActionPush_UseAbilityOnLocation(ward, target:GetLocation());
+    else
+      return npcBot:ActionPush_UseAbilityOnLocation(ward, npcBot:GetLocation() + Helper.RandomForwardVector(ward:GetCastRange()));
+    end
   end
 
   local enemyHeroes = npcBot:GetNearbyHeroes(575, true, BOT_MODE_NONE);
