@@ -8,6 +8,8 @@ local function GetScriptDirectory()
 end
 -----------------------------------------
 
+local VERSION = 'v20170312';
+
 local inspect = require(GetScriptDirectory() .. "/inspect");
 
 local Helper = {};
@@ -304,7 +306,7 @@ end
 function Helper.GetPushDesire(npcBot, lane)
 
   if DotaTime() >= 0 and DotaTime() < 10 then
-    Helper.ChatIfChanged("Hi there, this is ExtremePush v20170311");
+    Helper.ChatIfChanged("Hi there, this is ExtremePush " .. VERSION);
   end
   if DotaTime() >= 10 and DotaTime() < 20 then
     Helper.ChatIfChanged("If this is older than the version in Workshop, try unsubscribe and resubscribe to force update");
