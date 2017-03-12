@@ -92,11 +92,11 @@ function Helper.PurchaseItems(npcBot, buildTable)
 
   if (npcBot:GetGold() >= GetItemCost(sNextItem)) then
     if (IsItemPurchasedFromSecretShop(sNextItem)) then
-      if GetCourier(0):DistanceFromSecretShop() < 300 then
-        PurchaseItem(GetCourier(0));
-        npcBot:ActionImmediate_Courier(GetCourier(0), COURIER_ACTION_TRANSFER_ITEMS);
+      if GetCourier(GetNumCouriers() -1):DistanceFromSecretShop() < 300 then
+        PurchaseItem(GetCourier(GetNumCouriers() -1));
+        npcBot:ActionImmediate_Courier(GetCourier(GetNumCouriers() -1), COURIER_ACTION_TRANSFER_ITEMS);
       elseif IsCourierAvailable() then
-        npcBot:ActionImmediate_Courier(GetCourier(0), COURIER_ACTION_SECRET_SHOP);
+        npcBot:ActionImmediate_Courier(GetCourier(GetNumCouriers() -1), COURIER_ACTION_SECRET_SHOP);
       end
     else
       PurchaseItem(npcBot);
@@ -253,21 +253,21 @@ function Helper.WhichLaneToPush(npcBot)
   if distanceToBot < distanceToTop and
     distanceToBot < distanceToMid and
     (GetBarracks(GetOpposingTeam(), BARRACKS_BOT_MELEE) ~= nil or GetBarracks(GetOpposingTeam(), BARRACKS_BOT_RANGED) ~= nil) then
-    Helper.ChatIfChanged("Pushing Bot");
+    -- Helper.ChatIfChanged("Pushing Bot");
     return LANE_BOT;
   end
 
   if distanceToTop < distanceToMid and
     distanceToTop < distanceToBot and
     (GetBarracks(GetOpposingTeam(), BARRACKS_TOP_MELEE) ~= nil or GetBarracks(GetOpposingTeam(), BARRACKS_TOP_RANGED) ~= nil) then
-    Helper.ChatIfChanged("Pushing Top");
+    -- Helper.ChatIfChanged("Pushing Top");
     return LANE_TOP;
   end
 
   if distanceToMid < distanceToTop and
     distanceToMid < distanceToBot and
     (GetBarracks(GetOpposingTeam(), BARRACKS_MID_MELEE) ~= nil or GetBarracks(GetOpposingTeam(), BARRACKS_MID_RANGED) ~= nil) then
-    Helper.ChatIfChanged("Pushing Mid");
+    -- Helper.ChatIfChanged("Pushing Mid");
     return LANE_MID;
   end
 
@@ -302,6 +302,19 @@ function Helper.TeamAlive()
 end
 
 function Helper.GetPushDesire(npcBot, lane)
+
+  if DotaTime() >= 0 and DotaTime() < 10 then
+    Helper.ChatIfChanged("Hi there, this is ExtremePush v20170311");
+  end
+  if DotaTime() >= 10 and DotaTime() < 20 then
+    Helper.ChatIfChanged("If this is older than the version in Workshop, try unsubscribe and resubscribe to force update");
+  end
+  if DotaTime() >= 20 and DotaTime() < 30 then
+    Helper.ChatIfChanged("Please report any bugs to @insraq (Twitter) or hi@ruoyusun.com (Email)");
+  end
+  if DotaTime() >= 30 and DotaTime() < 40 then
+    Helper.ChatIfChanged("Last but not least, goold luck and have fun :-)");
+  end
 
   if DotaTime() < 60 * 10 then
     return 0.1;

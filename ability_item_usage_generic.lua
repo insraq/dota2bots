@@ -15,8 +15,8 @@ local Helper = require(GetScriptDirectory() .. "/helper");
 
 local function considerGlyph(tower)
   if tower:GetHealth() < tower:GetMaxHealth() * 0.5 and
-    tower:TimeSinceDamagedByAnyHero() < 4 and tower:TimeSinceDamagedByAnyHero() > 1 and
-    tower:TimeSinceDamagedByCreep() < 4 and tower:TimeSinceDamagedByCreep() > 1 and
+    (tower:TimeSinceDamagedByAnyHero() < 4 and tower:TimeSinceDamagedByAnyHero() > 1 or
+    tower:TimeSinceDamagedByCreep() < 4 and tower:TimeSinceDamagedByCreep() > 1) and
     GetGlyphCooldown() == 0 then
       GetBot():ActionImmediate_Glyph();
   end
@@ -177,6 +177,30 @@ function BuybackUsageThink()
     GetLaneFrontAmount(GetTeam(), LANE_MID, false) < 0.2 or
     GetLaneFrontAmount(GetTeam(), LANE_BOT, false) < 0.2 then
     npcBot:ActionImmediate_Buyback();
+  end
+end
+
+function CourierUsageThink()
+  local npcBot = GetBot();
+
+  if not IsCourierAvailable() then
+    return
+  end
+
+  if GetCourierState(GetCourier(GetNumCouriers() -1)) ~= COURIER_STATE_IDLE
+  and  GetCourierState(GetCourier(GetNumCouriers() -1)) ~= COURIER_STATE_AT_BASE then
+    return
+  end
+
+  if GetCourierState(GetCourier(GetNumCouriers() -1)) == COURIER_STATE_IDLE
+    and GetCourier(GetNumCouriers() -1):DistanceFromFountain() > 200 then
+    npcBot:ActionImmediate_Courier(GetCourier(GetNumCouriers() -1), COURIER_ACTION_RETURN);
+    return
+  end
+
+  if npcBot:IsAlive() and (npcBot:GetStashValue() > 50 or npcBot:GetCourierValue() > 50) then
+    npcBot:ActionImmediate_Courier(GetCourier(GetNumCouriers() -1), COURIER_ACTION_TAKE_AND_TRANSFER_ITEMS);
+    return
   end
 end
 
