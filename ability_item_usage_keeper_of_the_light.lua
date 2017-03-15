@@ -27,7 +27,7 @@ function AbilityUsageThink()
 
   local npcBot = GetBot();
 
-  local wave = npcBot:GetAbilityByName(Abilities[1]);
+  local wave = npcBot:GetAbilityInSlot(0);
   local leak = npcBot:GetAbilityByName(Abilities[2]);
   local mana = npcBot:GetAbilityByName(Abilities[3]);
   local ult = npcBot:GetAbilityByName(Abilities[6]);
@@ -44,7 +44,7 @@ function AbilityUsageThink()
     end
   end
 
-  if npcBot:IsChanneling() or npcBot:IsUsingAbility() then
+  if npcBot:IsChanneling() or (npcBot:IsUsingAbility() and (not wave:IsInAbilityPhase())) then
     return;
   end
 

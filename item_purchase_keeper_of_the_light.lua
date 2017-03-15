@@ -23,6 +23,11 @@ local tableItemsToBuy = {
 
   "item_recipe_null_talisman",
 
+  "item_point_booster",
+  "item_staff_of_wizardry",
+  "item_ogre_axe",
+  "item_blade_of_alacrity",
+
   "item_belt_of_strength",
   "item_staff_of_wizardry",
   "item_recipe_necronomicon",
@@ -46,14 +51,7 @@ local tableItemsToBuy = {
 
   "item_vitality_booster",
   "item_reaver",
-  "item_recipe_heart",
-
-  "item_vitality_booster",
-  "item_energy_booster",
-  "item_point_booster",
-  "item_mystic_staff",
-
-
+  "item_recipe_heart"
 };
 
 local abilities = {
