@@ -77,6 +77,10 @@ function Helper.PurchaseBootsAndTP(npcBot)
 
 end
 
+function Helper.WasDamagedFor(entity, seconds)
+
+end
+
 function Helper.PurchaseItems(npcBot, buildTable)
   if ( #buildTable == 0 ) then
     npcBot:SetNextItemPurchaseValue(0);
@@ -122,13 +126,39 @@ function Helper.PurchaseTP(npcBot)
   npcBot:ActionImmediate_PurchaseItem("item_tpscroll");
 end
 
-local cache = {};
+local cache0 = {};
 
-function Helper.HasValueChanged(key, value, callback)
-  if cache[key] ~= nil and cache[key] ~= value then
-    callback(value, cache[key])
+function Helper.OnValueChanged(key, value, callback)
+  if cache0[key] ~= nil and cache0[key] ~= value then
+    callback(value, cache0[key])
   end
-  cache[key] = value;
+  cache0[key] = value;
+end
+
+local cache1 = {};
+
+function Helper.GetLastValues(key, value)
+  if cache1[key] == nil then
+    cache1[key] = {
+      {value, DotaTime()},
+      {value, DotaTime()},
+      {value, DotaTime()},
+      {value, DotaTime()},
+      {value, DotaTime()},
+      {value, DotaTime()},
+      {value, DotaTime()},
+      {value, DotaTime()},
+      {value, DotaTime()},
+      {value, DotaTime()},
+    };
+  end
+
+  if DotaTime() - cache1[key][1][2] >= 1 then
+    table.remove(cache1[key])
+    table.insert(cache1[key], 1, {value, DotaTime()})
+  end
+
+  return cache1[key];
 end
 
 local last = "";

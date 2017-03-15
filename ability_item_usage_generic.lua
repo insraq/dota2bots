@@ -14,9 +14,8 @@ end
 local Helper = require(GetScriptDirectory() .. "/helper");
 
 local function considerGlyph(tower)
-  if tower:GetHealth() < tower:GetMaxHealth() * 0.5 and
-    (tower:TimeSinceDamagedByAnyHero() < 4 and tower:TimeSinceDamagedByAnyHero() > 1 or
-    tower:TimeSinceDamagedByCreep() < 4 and tower:TimeSinceDamagedByCreep() > 1) and
+  local recentValues = Helper.GetLastValues('Health:' .. tower:GetUnitName(), tower:GetHealth());
+  if recentValues[5][1] - recentValues[1][1] > tower:GetHealth() * 0.5 and
     GetGlyphCooldown() == 0 then
       GetBot():ActionImmediate_Glyph();
   end
