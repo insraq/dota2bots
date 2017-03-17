@@ -383,33 +383,29 @@ function Helper.PushThink(npcBot, lane)
     return;
   end
 
-  local offset = -1600;
   local team, enemyTeam = Helper.TeamAlive();
 
-  if (lane == LANE_TOP) then
-    otherLanes = {LANE_MID, LANE_BOT};
-  end
-  if (lane == LANE_MID) then
-    otherLanes = {LANE_TOP, LANE_BOT};
-  end
-  if (lane == LANE_BOT) then
-    otherLanes = {LANE_MID, LANE_TOP};
+  local IDs = GetTeamPlayers(GetOpposingTeam());
+  local laneFrontLocation = GetLaneFrontLocation(GetTeam(), lane, 0);
+  local distanceGuess = 0;
+  local enemyAlive = 0;
+
+  for _,id in pairs(IDs) do
+    if IsHeroAlive(id) then
+      local info = GetHeroLastSeenInfo(id);
+      distanceGuess = distanceGuess + #(info.location - laneFrontLocation) - info.time * 400
+      enemyAlive = enemyAlive + 1;
+    end
   end
 
-  local enemy = Helper.GetEnemyLastSeenInfo(5.0);
+  local offset = -Clamp(1600 - distanceGuess / enemyAlive, (enemyAlive - #npcBot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)) * 400, 2000);
 
-  if Helper.WeAreStronger(npcBot, 1600) and 
-    #npcBot:GetNearbyHeroes(1600, false, BOT_MODE_NONE) >= #enemy[lane] and
-    #npcBot:GetNearbyHeroes(1600, false, BOT_MODE_NONE) >= enemyTeam - #enemy[otherLanes[1]] - #enemy[otherLanes[2]] then
-    -- Helper.ChatIfChanged("Stronger, moving to lane front");
+  if Helper.WeAreStronger(npcBot, 1600) and
+    #npcBot:GetNearbyHeroes(1600, false, BOT_MODE_NONE) >= enemyAlive then
     offset = 0;
-  elseif Helper.WeAreStronger(npcBot, 1600) and
-    #npcBot:GetNearbyHeroes(1600, false, BOT_MODE_NONE) >= #enemy[lane] then
-    -- Helper.ChatIfChanged("Might be stronger, moving behind the lane front");
-    offset = -500;
-  else
-    -- Helper.ChatIfChanged("Weaker, wait for teammates");
   end
+
+  print(offset);
 
   npcBot:ActionPush_MoveToLocation(
     GetLaneFrontLocation(GetTeam(), lane, offset) - Helper.RandomForwardVector(npcBot:GetAttackRange() * 0.8)
