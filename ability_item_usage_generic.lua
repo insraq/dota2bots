@@ -169,6 +169,9 @@ end
 
 function BuybackUsageThink()
   local npcBot = GetBot();
+  if npcBot:HasBuyback() then
+    print(npcBot:GetUnitName());
+  end
   if npcBot:IsAlive() or (not npcBot:HasBuyback()) then
     return;
   end

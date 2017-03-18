@@ -8,7 +8,7 @@ local function GetScriptDirectory()
 end
 -----------------------------------------
 
-local VERSION = 'v20170312';
+local VERSION = 'v20170318.2';
 
 local inspect = require(GetScriptDirectory() .. "/inspect");
 
@@ -385,27 +385,37 @@ function Helper.PushThink(npcBot, lane)
 
   local team, enemyTeam = Helper.TeamAlive();
 
-  local IDs = GetTeamPlayers(GetOpposingTeam());
-  local laneFrontLocation = GetLaneFrontLocation(GetTeam(), lane, 0);
-  local distanceGuess = 0;
-  local enemyAlive = 0;
+  local enemyIds = GetTeamPlayers(GetOpposingTeam());
+  local teammateIds = GetTeamPlayers(GetTeam());
 
-  for _,id in pairs(IDs) do
+  local laneFrontLocation = GetLaneFrontLocation(GetTeam(), lane, 0);
+  local enemyDistance = 0;
+  local enemyAlive = 0;
+  local teammateDistance = 0;
+  local teammateAlive = 0;
+
+  for _,id in pairs(enemyIds) do
     if IsHeroAlive(id) then
       local info = GetHeroLastSeenInfo(id);
-      distanceGuess = distanceGuess + #(info.location - laneFrontLocation) - info.time * 400
+      -- Take an aggressive guess
+      enemyDistance = enemyDistance + math.max(#(info.location - laneFrontLocation) - info.time * 400, 400);
       enemyAlive = enemyAlive + 1;
     end
   end
 
-  local offset = -Clamp(1600 - distanceGuess / enemyAlive, (enemyAlive - #npcBot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)) * 400, 2000);
-
-  if Helper.WeAreStronger(npcBot, 1600) and
-    #npcBot:GetNearbyHeroes(1600, false, BOT_MODE_NONE) >= enemyAlive then
-    offset = 0;
+  for _,id in pairs(teammateIds) do
+    if IsHeroAlive(id) then
+      local info = GetHeroLastSeenInfo(id);
+      teammateDistance = teammateDistance + #(info.location - laneFrontLocation);
+      teammateAlive = teammateAlive + 1;
+    end
   end
 
-  print(offset);
+  local offset = -math.max(teammateDistance / teammateAlive - enemyDistance / enemyAlive, 0);
+
+  if Helper.WeAreStronger(npcBot, 1600) and #npcBot:GetNearbyHeroes(900, false, BOT_MODE_NONE) >= enemyAlive then
+    offset = 0;
+  end
 
   npcBot:ActionPush_MoveToLocation(
     GetLaneFrontLocation(GetTeam(), lane, offset) - Helper.RandomForwardVector(npcBot:GetAttackRange() * 0.8)
