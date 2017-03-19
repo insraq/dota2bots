@@ -14,6 +14,7 @@ end
 local Helper = require(GetScriptDirectory() .. "/helper");
 
 local function considerGlyph(tower)
+  if tower ~= nil then return end
   local recentValues = Helper.GetLastValues('Health:' .. tower:GetUnitName(), tower:GetHealth());
   if recentValues[5][1] - recentValues[1][1] > tower:GetHealth() * 0.5 and
     GetGlyphCooldown() == 0 then

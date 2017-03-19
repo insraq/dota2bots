@@ -420,10 +420,22 @@ function Helper.PushThink(npcBot, lane)
   npcBot:ActionPush_MoveToLocation(
     GetLaneFrontLocation(GetTeam(), lane, offset) - Helper.RandomForwardVector(npcBot:GetAttackRange() * 0.8)
   );
-  local creeps = npcBot:GetNearbyLaneCreeps(npcBot:GetAttackRange(), true);
-  if #creeps > 0 then
-    npcBot:ActionPush_AttackUnit(creeps[1], false)
+
+  local towers = npcBot:GetNearbyTowers(600, true);
+  if #towers > 0 then
+    return npcBot:ActionPush_AttackUnit(towers[1], true)
   end
+
+  local barracks = npcBot:GetNearbyBarracks(600, true);
+  if #barracks > 0 then
+    return npcBot:ActionPush_AttackUnit(barracks[1], true)
+  end
+
+  local creeps = npcBot:GetNearbyLaneCreeps(600, true);
+  if #creeps > 0 then
+    return npcBot:ActionPush_AttackUnit(creeps[1], true)
+  end
+
 end
 
 function Helper.WeAreStronger(npcBot, radius)
