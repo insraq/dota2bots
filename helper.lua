@@ -273,9 +273,9 @@ function Helper.WhichLaneToPush(npcBot)
   for _,id in pairs(IDs) do
     if TeamLocation[id] ~= nil then
       if IsHeroAlive(id) then
-        distanceToTop = distanceToTop + #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - TeamLocation[id]);
-        distanceToMid = distanceToMid + #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - TeamLocation[id]);
-        distanceToBot = distanceToBot + #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - TeamLocation[id]);
+        distanceToTop = math.max(distanceToTop, #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - TeamLocation[id]));
+        distanceToMid = math.max(distanceToMid, #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - TeamLocation[id]));
+        distanceToBot = math.max(distanceToBot, #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - TeamLocation[id]));
       end
     else
       return Helper.TeamPushLane();
@@ -348,8 +348,11 @@ function Helper.GetPushDesire(npcBot, lane)
     Helper.ChatIfChanged("Last but not least, goold luck and have fun :-)");
   end
 
-  if DotaTime() < 60 * 10 then
-    return 0.1;
+  local IDs = GetTeamPlayers(GetTeam());
+  for _,id in pairs(IDs) do
+    if GetHeroLevel(id) < 6 and DotaTime() < 60 * 10 then
+      return 0.1
+    end
   end
 
   if Helper.WhichLaneToPush(npcBot) == lane then

@@ -201,7 +201,9 @@ function CourierUsageThink()
     return
   end
 
-  if npcBot:IsAlive() and (npcBot:GetStashValue() > 50 or npcBot:GetCourierValue() > 50) then
+  local limit = math.min(DotaTime(), 1000);
+
+  if npcBot:IsAlive() and (npcBot:GetStashValue() >= limit or npcBot:GetCourierValue() >= limit) then
     npcBot:ActionImmediate_Courier(GetCourier(GetNumCouriers() -1), COURIER_ACTION_TAKE_AND_TRANSFER_ITEMS);
     return
   end
